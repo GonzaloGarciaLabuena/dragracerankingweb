@@ -79,3 +79,50 @@ export async function DELETE(request) {
 
     return NextResponse.json(data)
 }
+
+export async function PATCH(request) {
+    const { supabase, response } = await getAuthenticatedAdmin()
+
+    if (response) {
+        return response
+    }
+
+    const body = await request.json()
+
+    if (!body.episodeId) {
+        return Response.json(
+            { error: 'Episode id is required' },
+            { status: 400 }
+        )
+    }
+
+    if (!body.title) {
+        return Response.json(
+            { error: 'New title for the episode is required' },
+            { status: 400 }
+        )
+    }
+
+    const updates = {
+        title: body.title
+    }
+
+    const { data, error: dbError } = await supabase
+        .from('episode')
+        .update(updates)
+        .eq('id', body.episodeId)
+        .select()
+        .single()
+
+    if (dbError) {
+        return NextResponse.json(
+            { error: dbError.message },
+            { status: 500 }
+        )
+    }
+
+    return NextResponse.json({
+        success: true,
+        data
+    })
+}

@@ -13,7 +13,8 @@ import SeasonEditModal from './SeasonEditModal'
 
 export default function SeasonsAdmin() {
 
-    const [seasonsMap, setSeasonsMap] = useState(new Map())
+    const [seasons, setSeasons] = useState([])
+    const [episodes, setEpisodes] = useState([])
     const [selectedSeason, setSelectedSeason] = useState(null)
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const [editingEpisode, setEditingEpisode] = useState(null)
@@ -22,57 +23,31 @@ export default function SeasonsAdmin() {
     const [editSeason, setEditSeason] = useState(null)
     const [seasonSearch, setSeasonSearch] = useState('')
 
-    const fetchSeasons = async (selectSeason) => {
-        try {
-            const map = await seasonService.getSeasonsWithEpisodes()
+    const fetchSeasons = async () => {
+        const seasonsList = await seasonService.getAllSeasons()
+        setSeasons(seasonsList)
+    }
 
-            setSeasonsMap(map)
-
-            if(selectSeason){
-                const selected = Array.from(map.keys()).find(season => season.id === selectSeason.id)
-
-                if (selected) {
-                    setSelectedSeason(selected)
-                }
-            }else{
-                const firstSeason = map.keys().next().value
-
-                if (firstSeason) {
-                    setSelectedSeason(firstSeason)
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching seasons:', error)
-        }
+    const fetchEpisodes = async (season) => {
+        const episodesList = await episodeService.getEpisodes(season.id)
+        setEpisodes(episodesList)
     }
 
     useEffect(() => {
         fetchSeasons()
     }, [])
 
-    const updateEpisodesList = async () => {
-        try {
-            const updatedEpisodes = await episodeService.getEpisodes(selectedSeason.id)
-            setSeasonsMap(prev => {
-                const newMap = new Map(prev)
-                newMap.set(selectedSeason, updatedEpisodes)
-                return newMap
-            })
-        } catch (error) {
-            console.error('Error fetching episodes for the season:', error)
-        }
+    const updateEpisodes = async () => {
+        fetchEpisodes(selectedSeason)
     }
 
     const handleSeasonChange = (season) => {
         setSelectedSeason(season)
+        fetchEpisodes(season)
         setDropdownOpen(false)
     }
 
-    const selectedEpisodes = selectedSeason
-        ? seasonsMap.get(selectedSeason)
-        : []
-
-    const filteredSeasons = Array.from(seasonsMap.keys()).filter(season =>
+    const filteredSeasons = seasons.filter(season =>
         season.name.toLowerCase().includes(seasonSearch.toLowerCase())
     )
 
@@ -136,6 +111,7 @@ export default function SeasonsAdmin() {
                 >
                     Publicar temporada
                 </button>
+
                 {dropdownOpen && (
                     <div className={styles.dropdown}>
 
@@ -212,14 +188,14 @@ export default function SeasonsAdmin() {
                                 className={styles.addEpisode}
                                 onClick={ async () => {
                                     await episodeService.deleteLastEpisode(selectedSeason.id);
-                                    updateEpisodesList();
+                                    updateEpisodes();
                                 }}
                             >
                                 Eliminar ultimo episodio
                             </button>
                         </div>
 
-                        {selectedEpisodes.map(episode => (
+                        {episodes.map(episode => (
                             <button
                                 key={episode.id}
                                 type="button"
@@ -246,12 +222,9 @@ export default function SeasonsAdmin() {
                     episode={editingEpisode}
                     onClose={() => setEditingEpisode(null)}
 
-                    onSave={(updatedEpisode) => {
-                        console.log(
-                            'Episodio modificado:',
-                            updatedEpisode
-                        )
-
+                    onSave={ async (updatedEpisode) => {
+                        await episodeService.updateEpisode(updatedEpisode);
+                        updateEpisodes();
                         setEditingEpisode(null)
                     }}
                 />
@@ -263,7 +236,7 @@ export default function SeasonsAdmin() {
 
                     onSave={ async (title) => {
                         await episodeService.createEpisode(selectedSeason.id, title);
-                        updateEpisodesList();
+                        updateEpisodes();
                         setNewEpisode(null)
                     }}
                 />

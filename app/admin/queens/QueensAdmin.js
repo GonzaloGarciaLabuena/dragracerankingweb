@@ -187,17 +187,17 @@ export default function QueensAdmin() {
                 ) : (
                     queens.map(queen => (
                         <button
-                            key={queen.queen.id + '-' + queen.season.name}
+                            key={queen.id + '-' + queen.season.name}
                             type="button"
                             className={styles.queen}
                         >
                             <img
                                 src={queen.image_url}
-                                alt={queen.queen.name}
+                                alt={queen.name}
                             />
 
                             <span>
-                                {queen.queen.name}
+                                {queen.name}
                             </span>
 
                             <small>
@@ -244,14 +244,15 @@ export default function QueensAdmin() {
                         const queenFound = await queenService.existsQueen(name)
                         if(!queenFound){
                             if(!await queenService.createQueen(name, season.id, imgQueenUrl)){
-                            throw new Error(`Creating queen ${name} went wrong`)
+                                throw new Error(`Creating queen ${name} went wrong`)
                             }
                         }else{
                             //Ya existe una reina con ese nombre, saltamos ese paso y añadimos solo otra participacion
                             if(!await participateService.addParticipation(queenFound.id, season.id, imgQueenUrl)){
-                            throw new Error(`Creating participation of queen ${queenFound.name} went wrong`)
+                                throw new Error(`Creating participation of queen ${queenFound.name} went wrong`)
                             }
                         }
+                        alert("Reina creada correctamente")
                         fetchQueens(1)
                         setNewQueen(false)
                     }}

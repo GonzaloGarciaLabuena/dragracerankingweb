@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import {  getAuthenticatedAdmin } from '@/lib/supabase/auth'
+import { getAuthenticatedUser, getAuthenticatedAdmin } from '@/lib/supabase/auth'
 
 export async function GET() {
     const { supabase, response } = await getAuthenticatedAdmin()
@@ -10,8 +10,12 @@ export async function GET() {
 
     const { data, error: dbError } = await supabase
         .from('season')
-        .select('*')
-        .order('year', { ascending: false })
+        .insert({
+            name: body.name,
+            franchise: body.franchise,
+            year: body.year
+        })
+        .select() // Devuelve el dato insertado
 
     if (dbError) {
         return NextResponse.json(
@@ -20,5 +24,5 @@ export async function GET() {
         )
     }
 
-    return NextResponse.json(data)
+    return NextResponse.json(data[0])
 }

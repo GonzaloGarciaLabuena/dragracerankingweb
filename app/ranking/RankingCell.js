@@ -10,29 +10,31 @@ export default function RankingCell({ cellId, activeCell, setActiveCell, pointTy
     const open = activeCell === cellId
 
     const handleOpen = () => {
-        if (open) {
-            setActiveCell(null)
-            return
+        if(activeCell !== null){
+            if (open) {
+                setActiveCell(false)
+                return
+            }
+
+            if (cellRef.current) {
+                const rect = cellRef.current.getBoundingClientRect()
+                const dropdownHeight = 250
+                const spaceBelow = window.innerHeight - rect.bottom
+                const spaceAbove = rect.top
+
+                setOpenUp(
+                    spaceBelow < dropdownHeight &&
+                    spaceAbove > spaceBelow
+                )
+            }
+
+            setActiveCell(cellId)
         }
-
-        if (cellRef.current) {
-            const rect = cellRef.current.getBoundingClientRect()
-            const dropdownHeight = 250
-            const spaceBelow = window.innerHeight - rect.bottom
-            const spaceAbove = rect.top
-
-            setOpenUp(
-                spaceBelow < dropdownHeight &&
-                spaceAbove > spaceBelow
-            )
-        }
-
-        setActiveCell(cellId)
     }
 
     const handleSelect = (selectedPoint) => {
         setPoint(selectedPoint)
-        setActiveCell(null)
+        setActiveCell(false)
     }
 
     const rect = cellRef.current?.getBoundingClientRect()

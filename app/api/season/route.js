@@ -2,18 +2,16 @@ import { NextResponse } from 'next/server'
 import { getAuthenticatedUser, getAuthenticatedAdmin } from '@/lib/supabase/auth'
 
 export async function GET() {
-    const { supabase, user, error: authError } = await getAuthenticatedUser()
+    const { supabase, response } = await getAuthenticatedUser()
 
-    if (!user) {
-        return Response.json(
-            { error: authError.message },
-            { status: 401 }
-        )
+    if (response) {
+        return response
     }
 
-    const { data, error: dbError } = await supabase.rpc(
-        'get_rankable_seasons'
-    )
+    const { data, error: dbError } = await supabase
+        .from('season')
+        .select('*')
+        .order('year', { ascending: false })
 
     if (dbError) {
         return NextResponse.json(
@@ -21,6 +19,7 @@ export async function GET() {
             { status: 500 }
         )
     }
+
     return NextResponse.json(data)
 }
 

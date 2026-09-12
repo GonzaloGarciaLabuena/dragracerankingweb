@@ -12,6 +12,11 @@ export default function Header() {
     useEffect(() => {
         getProfile()
 
+        const handleProfileUpdated = () => {
+            getProfile()
+        }
+        window.addEventListener('profileUpdated', handleProfileUpdated)
+
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -52,8 +57,12 @@ export default function Header() {
                 {/* Navegación */}
                 <nav className={styles.nav}>
                     <Link href="/ranking" className={styles.buttonHeader}>Ranking</Link>
-                    <Link href="/test" className={styles.buttonHeader}>Testing</Link>
-                    <Link href="/admin" className={styles.buttonHeader}>Administrador</Link>
+                    <Link href="/search" className={styles.buttonHeader}>Other Rankings</Link>
+                    {profile?.role === 'admin' && (
+                        <Link href="/admin" className={styles.buttonHeader}>
+                            Administrador
+                        </Link>
+                    )}
                 </nav>
 
                 {/* Usuario */}

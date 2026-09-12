@@ -3,27 +3,36 @@
 import styles from './page.module.css'
 import { useEffect, useState } from 'react'
 import { seasonService } from '@/lib/services/seasonService'
-import { episodeService } from '@/lib/services/episodeService'
 import { pointTypeService } from '@/lib/services/pointTypeService'
 import { queenService } from '@/lib/services/queenService'
 import { ppeService } from '@/lib/services/ppeService'
-import SeasonSelector from './SeasonSelector'
-import RankingTable from './RankingTable'
+import { episodeService } from '@/lib/services/episodeService'
+import { profileService } from '@/lib/services/profileService'
+import UserSelector from './UserSelector'
+import SeasonSelector from '../ranking/SeasonSelector'
+import RankingTable from '../ranking/RankingTable'
 
-export default function RankingPage() {
+export default function Search() {
+    const [users, setUsers] = useState([])
     const [seasons, setSeasons] = useState([])
+    const [selectedUser, setSelectedUser] = useState(null)
     const [selectedSeason, setSelectedSeason] = useState(null)
-    const [dropdownOpen, setDropdownOpen] = useState(false)
+    const [dropdownOpenUser, setDropdownOpenUser] = useState(false)
+    const [dropdownOpenSeason, setDropdownOpenSeason] = useState(false)
     const [episodes, setEpisodes] = useState([])
     const [pointTypes, setPointTypes] = useState([])
-    const [activeCell, setActiveCell] = useState(false)
     const [pointsMap, setPointsMap] = useState(new Map())
     const [queens, setQueens] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const fetchSeasons = async () => {
-        const map = await seasonService.getRankableSeasons()
-        setSeasons(map)
+    const fetchUsers = async () => {
+        const users = await profileService.getAllOtherProfiles()
+        setUsers(users)
+    }
+
+    const fetchSeasons = async (user) => {
+        const seasonList = await seasonService.getUserRankedSeasons(user)
+        setSeasons(seasonList)
     }
 
     const fetchEpisodes = async (season) => {
@@ -41,22 +50,25 @@ export default function RankingPage() {
         setQueens(data.data)
     }
 
-    const fetchPPE = async (season) => {
-        const map = await ppeService.getRanking(season, pointTypes)
+    const fetchPPE = async (user, season) => {
+        const map = await ppeService.getRankingOfUser(user, season, pointTypes)
         setPointsMap(map)
     }
 
-    const handleSeasonChange = async (season) => {
+    const handleUserChange = async (user) => {
         setLoading(true)
+        setSelectedUser(user)
+        setDropdownOpenUser(false)
 
-        setSelectedSeason(season)
-        setDropdownOpen(false)
-
+        setSelectedSeason(null)
+        setSeasons([])
+        setEpisodes([])
+        setQueens([])
+        setPointsMap(new Map())
+        
         try {
             await Promise.all([
-                fetchEpisodes(season),
-                fetchQueens(season),
-                fetchPPE(season)
+                fetchSeasons(user)
             ])
         } catch (error) {
             console.error('Error loading queens:', error)
@@ -65,9 +77,23 @@ export default function RankingPage() {
         }
     }
 
-    const saveRanking = async () => {
-        await ppeService.saveRanking(selectedSeason, queens, episodes, pointsMap)
-        alert("Ranking guardado correctamente")
+    const handleSeasonChange = async (season) => {
+        setLoading(true)
+
+        setSelectedSeason(season)
+        setDropdownOpenSeason(false)
+
+        try {
+            await Promise.all([
+                fetchEpisodes(season),
+                fetchQueens(season),
+                fetchPPE(selectedUser, season)
+            ])
+        } catch (error) {
+            console.error('Error loading queens:', error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -76,7 +102,7 @@ export default function RankingPage() {
 
             try {
                 await Promise.all([
-                    fetchSeasons(),
+                    fetchUsers(),
                     fetchPointTypes()
                 ])
             } catch (error) {
@@ -89,7 +115,9 @@ export default function RankingPage() {
         loadData()
     }, [])
 
-    return (
+
+    return(
+        
         <div className={styles.pageContent}>
 
             {loading && (
@@ -97,15 +125,25 @@ export default function RankingPage() {
                     <div className={styles.loadingSpinner}></div>
                     <span>Cargando...</span>
                 </div>
-            )}
+            )}  
 
-            <SeasonSelector
-                seasons={seasons}
-                selectedSeason={selectedSeason}
-                dropdownOpen={dropdownOpen}
-                setDropdownOpen={setDropdownOpen}
-                handleSeasonChange={handleSeasonChange}
+            <UserSelector
+                users={users}
+                selectedUser={selectedUser}
+                dropdownOpen={dropdownOpenUser}
+                setDropdownOpen={setDropdownOpenUser}
+                handleUserChange={handleUserChange}
             />
+
+             {selectedUser && ( 
+                <SeasonSelector
+                    seasons={seasons}
+                    selectedSeason={selectedSeason}
+                    dropdownOpen={dropdownOpenSeason}
+                    setDropdownOpen={setDropdownOpenSeason}
+                    handleSeasonChange={handleSeasonChange}
+                />
+            )}
 
             {selectedSeason && (
                 <RankingTable
@@ -114,12 +152,11 @@ export default function RankingPage() {
                     pointTypes={pointTypes}
                     pointsMap={pointsMap}
                     setPointsMap={setPointsMap}
-                    activeCell={activeCell}
-                    setActiveCell={setActiveCell}
-                    saveRanking={saveRanking}
+                    activeCell={null}
+                    setActiveCell={null}
+                    saveRanking={null}
                 />
             )}
-
         </div>
     )
 }

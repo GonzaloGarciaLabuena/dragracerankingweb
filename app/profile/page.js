@@ -11,6 +11,8 @@ export default function ProfilePage() {
     const router = useRouter()
 
     const [user, setUser] = useState(null)
+    const [editingUsername, setEditingUsername] = useState(false)
+    const [username, setUsername] = useState()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
@@ -49,6 +51,13 @@ export default function ProfilePage() {
         }
 
         router.push('/login')
+    }
+
+    const handleSaveUsername = async () => {
+        await profileService.updateYourProfile({username: username})
+        user.username = username
+        setEditingUsername(false)
+        window.dispatchEvent(new Event('profileUpdated'))
     }
 
     if (loading) {
@@ -95,9 +104,31 @@ export default function ProfilePage() {
                             Nombre Drag
                         </span>
 
-                        <span>
-                            {user.username}
-                        </span>
+                        {editingUsername ? (
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        ) : (
+                            <span>
+                                {user.username}
+                            </span>
+                        )}
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (editingUsername) {
+                                    handleSaveUsername()
+                                }else{
+                                    setUsername(user.username)
+                                    setEditingUsername(!editingUsername)
+                                }
+                            }}
+                        >
+                            {editingUsername ? 'Guardar' : 'Editar'}
+                        </button>
                     </div>
                 </section>
 

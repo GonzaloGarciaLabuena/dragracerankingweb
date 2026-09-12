@@ -10,7 +10,7 @@ export async function GET(request) {
             { status: 401 }
         )
     }
-    console.log("User ", user.id)
+
     const { searchParams } = new URL(request.url)
     const seasonId = searchParams.get("seasonId")
 

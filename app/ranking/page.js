@@ -7,6 +7,7 @@ import { episodeService } from '@/lib/services/episodeService'
 import { pointTypeService } from '@/lib/services/pointTypeService'
 import { queenService } from '@/lib/services/queenService'
 import { ppeService } from '@/lib/services/ppeService'
+import { profileService } from '@/lib/services/profileService'
 import SeasonSelector from './SeasonSelector'
 import RankingTable from './RankingTable'
 
@@ -20,7 +21,8 @@ export default function RankingPage() {
     const [pointsMap, setPointsMap] = useState(new Map())
     const [queens, setQueens] = useState([])
     const [loading, setLoading] = useState(true)
-
+    const [profile, setProfile] = useState(null)
+    
     const fetchSeasons = async () => {
         const map = await seasonService.getRankableSeasons()
         setSeasons(map)
@@ -44,6 +46,11 @@ export default function RankingPage() {
     const fetchPPE = async (season) => {
         const map = await ppeService.getRanking(season, pointTypes)
         setPointsMap(map)
+    }
+
+    const getProfile = async () => {
+        const profileData = await profileService.getProfileData()
+        setProfile(profileData)
     }
 
     const handleSeasonChange = async (season) => {
@@ -76,6 +83,7 @@ export default function RankingPage() {
 
             try {
                 await Promise.all([
+                    getProfile(),
                     fetchSeasons(),
                     fetchPointTypes()
                 ])
@@ -109,6 +117,8 @@ export default function RankingPage() {
 
             {selectedSeason && (
                 <RankingTable
+                    user={profile}
+                    season={selectedSeason}
                     queens={queens}
                     episodes={episodes}
                     pointTypes={pointTypes}

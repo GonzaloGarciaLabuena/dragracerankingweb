@@ -84,3 +84,11 @@
     background: #ffe5e5;
     color: #c00;
 }
+
+.queenImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}

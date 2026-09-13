@@ -147,6 +147,8 @@ export default function Search() {
 
             {selectedSeason && (
                 <RankingTable
+                    user={selectedUser}
+                    season={selectedSeason}
                     queens={queens}
                     episodes={episodes}
                     pointTypes={pointTypes}

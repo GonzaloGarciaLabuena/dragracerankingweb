@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import styles from './page.module.css'
 import { profileService } from '@/lib/services/profileService'
+import AvatarChangeModal from './AvatarChangeModal'
 
 export default function ProfilePage() {
 
@@ -15,6 +16,8 @@ export default function ProfilePage() {
     const [username, setUsername] = useState()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+
+    const [avatarModalOpen, setAvatarModalOpen] = useState(false)
 
     useEffect(() => {
         const getUser = async () => {
@@ -57,6 +60,13 @@ export default function ProfilePage() {
         await profileService.updateYourProfile({username: username})
         user.username = username
         setEditingUsername(false)
+        window.dispatchEvent(new Event('profileUpdated'))
+    }
+
+    const handleSaveAvatarImage = async (avatar) => {
+        await profileService.updateYourProfile({avatar_url: avatar})
+        user.avatar_url = avatar
+        setAvatarModalOpen(false)
         window.dispatchEvent(new Event('profileUpdated'))
     }
 
@@ -130,6 +140,23 @@ export default function ProfilePage() {
                             {editingUsername ? 'Guardar' : 'Editar'}
                         </button>
                     </div>
+                    <div className={styles.info}>
+                        <span className={styles.label}>
+                            Avatar
+                        </span>
+                        <img
+                            src={user.avatar_url || '/default_avatar.svg'}
+                            alt={user.username}
+                            className={styles.queenImage}
+                            draggable={false}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setAvatarModalOpen(true)}
+                        >
+                            Editar
+                        </button>
+                    </div>
                 </section>
 
                 <section className={styles.section}>
@@ -153,6 +180,15 @@ export default function ProfilePage() {
                     </button>
                 </section>
 
+                {avatarModalOpen && (
+                    <AvatarChangeModal
+                        currentAvatar={user.avatar_url}
+                        onClose={() => setAvatarModalOpen(false)}
+                        onSave={ (url_image) => {
+                            handleSaveAvatarImage(url_image)
+                        }}
+                    />
+                )}
             </div>
 
         </main>

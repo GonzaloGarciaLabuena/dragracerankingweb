@@ -50,7 +50,7 @@ export default function Header() {
             <div className={styles.container}>
 
                 {/* Logo */}
-                <Link href="/" className={styles.logo}>
+                <Link href="/ranking" className={styles.logo}>
                     DragRaceRanking
                 </Link>
 
@@ -71,6 +71,12 @@ export default function Header() {
                         <>
                             <Link href="/profile" className={styles.profile}>
                                {profile.username}
+                               <img
+                                    src={profile.avatar_url || '/default_avatar.svg'}
+                                    alt={profile.username}
+                                    className={styles.queenImage}
+                                    draggable={false}
+                                />
                             </Link>
                         </>
                     ) : (

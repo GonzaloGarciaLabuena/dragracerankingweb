@@ -99,13 +99,24 @@
 }
 
 .profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 16px;
     font-weight: bold;
     text-decoration: none;
-    color: black;   
+    color: black; 
+    white-space: nowrap;  
 }
 
 .profile:hover {
-    color: rgb(14, 14, 177);
-    transition: color 0.2s;
+    opacity: 0.8;
+}
+
+.queenImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
 }

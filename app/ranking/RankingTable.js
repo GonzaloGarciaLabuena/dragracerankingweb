@@ -2,6 +2,8 @@ import styles from './page.module.css'
 import RankingRow from './RankingRow'
 
 export default function RankingTable({
+    user,
+    season,
     queens,
     episodes,
     pointTypes,
@@ -49,6 +51,11 @@ export default function RankingTable({
         return index + 1
     }
 
+    const seasonName = season.name.replace(/^rupaul's /i, '')
+
+    const rankingTitle = `${user.username}'s ${seasonName}`
+    const [mainTitle, subtitle] = rankingTitle.split(/(?<=Drag Race) /)
+
     return (
         <div className={styles.tableContainer}>
 
@@ -61,12 +68,15 @@ export default function RankingTable({
                     Guardar ranking
                 </button>
             )}
-
+            
             <table className={styles.rankingTable}>
 
                 <thead>
                     <tr>
-                        <th className={styles.queenHeader}></th>
+                        <th className={styles.rankingHeader}>
+                            <span>{mainTitle}</span>
+                            <span>{subtitle}</span>
+                        </th>
 
                         {episodes.map(episode => (
                             <th

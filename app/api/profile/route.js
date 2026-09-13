@@ -13,7 +13,7 @@ export async function GET() {
 
     const { data, error: dbError } = await supabase
         .from('profiles')
-        .select('full_name, username, role')
+        .select('full_name, username, role, avatar_url')
         .eq('id', user.id)
         .single()
 
@@ -59,6 +59,10 @@ export async function PATCH(request) {
 
     if (body.editData.full_name !== undefined) {
         updates.full_name = body.editData.full_name
+    }
+
+    if (body.editData.avatar_url !== undefined) {
+        updates.avatar_url = body.editData.avatar_url
     }
 
     const { data, error: dbError } = await supabase

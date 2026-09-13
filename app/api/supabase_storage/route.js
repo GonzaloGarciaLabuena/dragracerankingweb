@@ -28,35 +28,17 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-    const { supabase, user, profile, response } = await getAuthenticatedAdmin()
-    
+    const { supabase, response } = await getAuthenticatedAdmin()
+
     if (response) {
         return response
     }
-
-    console.log('USER ID:', user?.id)
-console.log('PROFILE:', profile)
-
-const { data: testProfile, error: testError } = await supabase
-    .from('profiles')
-    .select('id, role')
-    .eq('id', user.id)
-    .single()
-
-console.log('TEST PROFILE:', testProfile)
-console.log('TEST ERROR:', testError)
-
-const { data: isAdmin, error: isAdminError } =
-    await supabase.rpc('is_admin')
-
-console.log('RPC is_admin:', isAdmin)
-console.log('RPC error:', isAdminError)
 
     const formData = await request.formData()
     const franchise = formData.get('franchise')
     const name = formData.get('name').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const file = formData.get('file')
-    console.log('franchise:', franchise, 'name:', name, 'file:', file)
+
     const { data, error: dbError } = await supabase.storage
         .from('queen-images')
         .upload(

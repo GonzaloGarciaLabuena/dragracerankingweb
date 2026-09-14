@@ -235,25 +235,28 @@ export default function QueensAdmin() {
             )}
             {newQueen && (
                 <QueenNewModal
+                    season={selectedSeason}
                     onClose={() => setNewQueen(false)}
 
-                    onSave={ async ({ name, season }) => {
-                        const imgQueenUrl = await handleDownload(name, season)
-                        if (!imgQueenUrl) throw new Error('No image found')
+                    onSave={ async ({ name, url, season }) => {
 
                         const queenFound = await queenService.existsQueen(name)
                         if(!queenFound){
-                            if(!await queenService.createQueen(name, season.id, imgQueenUrl)){
+                            if(!await queenService.createQueen(name, season.id, url)){
                                 throw new Error(`Creating queen ${name} went wrong`)
                             }
                         }else{
                             //Ya existe una reina con ese nombre, saltamos ese paso y añadimos solo otra participacion
-                            if(!await participateService.addParticipation(queenFound.id, season.id, imgQueenUrl)){
+                            if(!await participateService.addParticipation(queenFound.id, season.id, url)){
                                 throw new Error(`Creating participation of queen ${queenFound.name} went wrong`)
                             }
                         }
                         alert("Reina creada correctamente")
-                        fetchQueens(1)
+                        if(selectedSeason){
+                            fetchQueensOnlySeason(selectedSeason) 
+                        }else{
+                            fetchAllQueens(page)
+                        }
                         setNewQueen(false)
                     }}
                 />

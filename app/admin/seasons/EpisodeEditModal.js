@@ -8,10 +8,12 @@ export default function EpisodeEditModal({
     onClose,
     onSave
 }) {
-    const [title, setTitle] = useState(episode.title)
+    const [title, setTitle] = useState("")
+    const [final, setFinal] = useState(false)
 
     useEffect(() => {
         setTitle(episode.title)
+        setFinal(episode.esFinal)
     }, [episode])
 
     const handleSubmit = (e) => {
@@ -19,7 +21,8 @@ export default function EpisodeEditModal({
 
         onSave({
             ...episode,
-            title: title.trim()
+            title: title.trim(),
+            esFinal: final
         })
     }
 
@@ -48,6 +51,15 @@ export default function EpisodeEditModal({
                             onChange={(e) => setTitle(e.target.value)}
                             autoFocus
                         />
+
+                        <label className={styles.checkboxLabel}>
+                            <input
+                                type="checkbox"
+                                checked={final}
+                                onChange={(e) => setFinal(e.target.checked)}
+                            />
+                            Episodio final
+                        </label>
                     </div>
 
                     <div className={styles.modalActions}>

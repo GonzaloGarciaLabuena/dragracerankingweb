@@ -1,5 +1,6 @@
 import styles from './page.module.css'
 import RankingRow from './RankingRow'
+import { useEffect, useState } from 'react'
 
 export default function RankingTable({
     user,
@@ -13,6 +14,8 @@ export default function RankingTable({
     setActiveCell,
     saveRanking
 }) {
+    const [mainTitle, setMainTitle] = useState('')
+    const [subtitle, setSubtitle] = useState('')
 
     const calculateScore = (queenId) => {
     
@@ -21,8 +24,12 @@ export default function RankingTable({
         for (const [currentKey, point] of pointsMap) {
             
             const currentQueenId = currentKey.split('|')[0]
+            const currentEpisodeId = currentKey.split('|')[1]
 
             if (currentQueenId === queenId) {
+                const episode = episodes.find(episode => episode.id === currentEpisodeId)
+                if (episode?.esFinal) continue
+
                 totalScore += point.value 
                 totalEpisodes++
             }
@@ -38,6 +45,7 @@ export default function RankingTable({
         }))
         .sort((a, b) => b.score - a.score)
 
+
     const getPosition = (index) => {
         if (index === 0) return 1
 
@@ -51,10 +59,20 @@ export default function RankingTable({
         return index + 1
     }
 
-    const seasonName = season.name.replace(/^rupaul's /i, '')
+    const setTableName = (seasonName, username) => {
+        if (!seasonName || !username) return
 
-    const rankingTitle = `${user.username}'s ${seasonName}`
-    const [mainTitle, subtitle] = rankingTitle.split(/(?<=Drag Race) /)
+        const name = seasonName.replace(/^rupaul's /i, '')
+        const rankingTitle = `${username}'s ${name}`
+        const [main, sub] = rankingTitle.split(/(?<=Drag Race) /)
+
+        setMainTitle(main)
+        setSubtitle(sub)
+    }
+    
+    useEffect(() => {
+        setTableName(season?.name, user?.username)
+    }, [season, user])
 
     return (
         <div className={styles.tableContainer}>

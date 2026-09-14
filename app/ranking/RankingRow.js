@@ -1,6 +1,6 @@
 import styles from './page.module.css'
 import RankingCell from './RankingCell'
-
+import { useEffect, useState } from 'react'
 export default function RankingRow({
     queen,
     episodes,
@@ -11,6 +11,8 @@ export default function RankingRow({
     setActiveCell,
     position
 }) {
+
+    const [imageLoading, setImageLoading] = useState(true)
 
     return (
         <tr>
@@ -23,12 +25,23 @@ export default function RankingRow({
                         {position}º
                     </span>
 
-                    <img
-                        src={queen.image_url}
-                        alt={queen.name}
-                        className={styles.queenImage}
-                        draggable={false}
-                    />
+                    <div className={styles.imageContainer}>
+
+                        {imageLoading && (
+                            <div className={styles.spinner}></div>
+                        )}
+
+                        <img
+                            src={queen.image_url}
+                            alt={queen.name}
+                            className={`${styles.queenImage} ${
+                                imageLoading ? styles.imageHidden : ''
+                            }`}
+                            draggable={false}
+                            onLoad={() => setImageLoading(false)}
+                        />
+
+                    </div>
 
                     <div className={styles.queenInfo}>
 
@@ -56,6 +69,7 @@ export default function RankingRow({
                         className={styles.scoreCell}
                     >
                         <RankingCell
+                            esFinal={episode.esFinal}
                             cellId={key}
                             activeCell={activeCell}
                             setActiveCell={setActiveCell}

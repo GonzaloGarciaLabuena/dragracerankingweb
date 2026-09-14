@@ -11,8 +11,11 @@ import { profileService } from '@/lib/services/profileService'
 import UserSelector from './UserSelector'
 import SeasonSelector from '../ranking/SeasonSelector'
 import RankingTable from '../ranking/RankingTable'
+import { useSearchParams } from 'next/navigation'
 
 export default function Search() {
+    const searchParams = useSearchParams()
+
     const [users, setUsers] = useState([])
     const [seasons, setSeasons] = useState([])
     const [selectedUser, setSelectedUser] = useState(null)
@@ -115,6 +118,33 @@ export default function Search() {
         loadData()
     }, [])
 
+    useEffect(() => {
+        const userId = searchParams.get('userId')
+
+        if (!userId || users.length === 0) return
+
+        const user = users.find(
+            user => String(user.id) === String(userId)
+        )
+
+        if (user) {
+            handleUserChange(user)
+        }
+    }, [searchParams, users])
+
+    useEffect(() => {
+        const seasonId = searchParams.get('seasonId')
+
+        if (!seasonId || seasons.length === 0) return
+
+        const season = seasons.find(
+            season => String(season.id) === String(seasonId)
+        )
+
+        if (season) {
+            handleSeasonChange(season)
+        }
+    }, [searchParams, seasons])
 
     return(
         

@@ -16,7 +16,7 @@ export async function GET(request) {
 
     const { data, error: dbError } = await supabase
         .from("episode")
-        .select("id, number, title")
+        .select("id, number, title, esFinal")
         .eq("season_id", seasonId)
         .order('number', { ascending: true })
     if (dbError) {
@@ -39,7 +39,8 @@ export async function POST(request) {
         .from('episode')
         .insert({
             season_id: body.seasonId,
-            title: body.title
+            title: body.title,
+            esFinal: body.esFinal
         })
         .select() // Devuelve el dato insertado
 
@@ -103,8 +104,16 @@ export async function PATCH(request) {
         )
     }
 
+    if (body.esFinal === null) {
+        return Response.json(
+            { error: 'Is finale episode is required' },
+            { status: 400 }
+        )
+    }
+    
     const updates = {
-        title: body.title
+        title: body.title,
+        esFinal: body.esFinal
     }
 
     const { data, error: dbError } = await supabase

@@ -85,3 +85,14 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkboxLabel input {
+    cursor: pointer;
+}

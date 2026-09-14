@@ -7,11 +7,13 @@ import { seasonService } from '@/lib/services/seasonService'
 import { wikiImgService } from "@/lib/services/wikiImgService";
 
 export default function QueenNewModal({
+    season,
     onClose,
     onSave
 }) {
     const [name, setName] = useState('')
-    const [selectedSeason, setSelectedSeason] = useState(null)
+    const [url, setUrl] = useState('')
+    const [selectedSeason, setSelectedSeason] = useState(season)
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const [seasons, setSeasons] = useState([])
     const [imagePreview, setImagePreview] = useState(null)
@@ -20,11 +22,11 @@ export default function QueenNewModal({
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        onSave({name: name, season: selectedSeason})
+        onSave({name: name, url: url, season: selectedSeason})
     }
 
-    const handleSeasonChange = (season) => {
-        setSelectedSeason(season)
+    const handleSeasonChange = (seasonChange) => {
+        setSelectedSeason(seasonChange)
         setDropdownOpen(false)
     }
     
@@ -143,6 +145,19 @@ export default function QueenNewModal({
 
                     </div>
 
+                    <div className={styles.formGroup}>
+                        <label htmlFor="queenName">
+                            Url
+                        </label>
+
+                        <input
+                            id="urlImg"
+                            type="text"
+                            onChange={(e) => setUrl(e.target.value)}
+                            autoFocus
+                        />
+                    </div>
+
                     <div className={styles.modalActions}>
 
                         <button
@@ -154,18 +169,10 @@ export default function QueenNewModal({
 
                         <button
                             type="button"
-                            disabled={!name.trim() || !selectedSeason}
+                            disabled={!name.trim() || !selectedSeason || !url}
                             onClick={async () => {
                                 try {
-                                    const imgBlob = await wikiImgService.getQueenImgWiki(
-                                        name.replace(/\s+/g, ''),
-                                        selectedSeason
-                                    )
-
-                                    if (!imgBlob) {
-                                        return
-                                    }
-                                    setImagePreview(URL.createObjectURL(imgBlob))
+                                    setImagePreview(url)
                                 } catch (error) {
                                     console.error('Error loading queen image:', error)
                                 }

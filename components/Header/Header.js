@@ -57,6 +57,7 @@ export default function Header() {
                 {/* Navegación */}
                 <nav className={styles.nav}>
                     <Link href="/ranking" className={styles.buttonHeader}>Ranking</Link>
+                    <Link href="/halloffame" className={styles.buttonHeader}>Hall of Fame</Link>
                     <Link href="/search" className={styles.buttonHeader}>Other Rankings</Link>
                     {profile?.role === 'admin' && (
                         <Link href="/admin" className={styles.buttonHeader}>

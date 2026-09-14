@@ -21,8 +21,12 @@ export default function RankingTable({
         for (const [currentKey, point] of pointsMap) {
             
             const currentQueenId = currentKey.split('|')[0]
+            const currentEpisodeId = currentKey.split('|')[1]
 
             if (currentQueenId === queenId) {
+                const episode = episodes.find(episode => episode.id === currentEpisodeId)
+                if (episode?.esFinal) continue
+
                 totalScore += point.value 
                 totalEpisodes++
             }
@@ -38,6 +42,7 @@ export default function RankingTable({
         }))
         .sort((a, b) => b.score - a.score)
 
+
     const getPosition = (index) => {
         if (index === 0) return 1
 
@@ -52,7 +57,6 @@ export default function RankingTable({
     }
 
     const seasonName = season.name.replace(/^rupaul's /i, '')
-
     const rankingTitle = `${user.username}'s ${seasonName}`
     const [mainTitle, subtitle] = rankingTitle.split(/(?<=Drag Race) /)
 

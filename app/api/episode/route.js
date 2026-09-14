@@ -104,13 +104,13 @@ export async function PATCH(request) {
         )
     }
 
-    if (!body.esFinal) {
+    if (body.esFinal === null) {
         return Response.json(
             { error: 'Is finale episode is required' },
             { status: 400 }
         )
     }
-
+    
     const updates = {
         title: body.title,
         esFinal: body.esFinal

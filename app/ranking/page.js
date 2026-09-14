@@ -10,8 +10,11 @@ import { ppeService } from '@/lib/services/ppeService'
 import { profileService } from '@/lib/services/profileService'
 import SeasonSelector from './SeasonSelector'
 import RankingTable from './RankingTable'
+import { useSearchParams } from 'next/navigation'
 
 export default function RankingPage() {
+    const searchParams = useSearchParams()
+
     const [seasons, setSeasons] = useState([])
     const [selectedSeason, setSelectedSeason] = useState(null)
     const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -96,6 +99,20 @@ export default function RankingPage() {
 
         loadData()
     }, [])
+
+    useEffect(() => {
+        const seasonId = searchParams.get('seasonId')
+
+        if (!seasonId || seasons.length === 0) return
+
+        const season = seasons.find(
+            season => String(season.id) === String(seasonId)
+        )
+
+        if (season) {
+            handleSeasonChange(season)
+        }
+    }, [searchParams, seasons])
 
     return (
         <div className={styles.pageContent}>

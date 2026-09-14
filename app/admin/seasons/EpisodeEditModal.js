@@ -14,7 +14,6 @@ export default function EpisodeEditModal({
     useEffect(() => {
         setTitle(episode.title)
         setFinal(episode.esFinal)
-        console.log(episode)
     }, [episode])
 
     const handleSubmit = (e) => {

@@ -223,6 +223,7 @@ export default function SeasonsAdmin() {
                     onClose={() => setEditingEpisode(null)}
 
                     onSave={ async (updatedEpisode) => {
+                        console.log(updatedEpisode)
                         await episodeService.updateEpisode(updatedEpisode);
                         updateEpisodes();
                         setEditingEpisode(null)

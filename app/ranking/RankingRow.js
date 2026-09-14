@@ -69,6 +69,7 @@ export default function RankingRow({
                         className={styles.scoreCell}
                     >
                         <RankingCell
+                            esFinal={episode.esFinal}
                             cellId={key}
                             activeCell={activeCell}
                             setActiveCell={setActiveCell}

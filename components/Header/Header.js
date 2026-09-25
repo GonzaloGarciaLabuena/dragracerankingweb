@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import styles from './Header.module.css'
 import { profileService } from '@/lib/services/profileService'
+import ThemeToggle from '@/components/Theme/ThemeToggle'
+import CButton from '@/components/CButton/CButton'
 
 export default function Header() {
     const [profile, setProfile] = useState(null)
@@ -59,7 +61,7 @@ export default function Header() {
                     <Link href="/ranking" className={styles.buttonHeader}>
                         Ranking
                     </Link>
-
+        
                     <Link href="/halloffame" className={styles.buttonHeader}>
                         Hall of Fame
                     </Link>
@@ -89,15 +91,19 @@ export default function Header() {
                         </Link>
                     ) : (
                         <>
-                            <button onClick={handleLogin} className={styles.login}>
+                            <CButton 
+                                onClick={handleLogin}
+                            >
                                 Login
-                            </button>
-
-                            <button onClick={handleRegister} className={styles.register}>
+                            </CButton>
+                            <CButton 
+                                onClick={handleRegister}
+                            >
                                 Register
-                            </button>
+                            </CButton>
                         </>
                     )}
+                    <ThemeToggle />
                 </div>
 
             </div>
@@ -124,9 +130,15 @@ export default function Header() {
                         aria-label="Abrir menú"
                     >
                         <img
-                            src={menuOpen ? '/cross-icon.svg' : '/burger-icon.svg'}
+                            src={menuOpen ? '/cross-icon-black.svg' : '/burger-icon-black.svg'}
                             alt=""
-                            className={styles.menuIcon}
+                            className={`${styles.menuIcon} ${styles.menuIconBlack}`}
+                        />
+
+                        <img
+                            src={menuOpen ? '/cross-icon-white.svg' : '/burger-icon-white.svg'}
+                            alt=""
+                            className={`${styles.menuIcon} ${styles.menuIconWhite}`}
                         />
                     </button>
                 </div>
@@ -162,30 +174,27 @@ export default function Header() {
                             </Link>
                         ) : (
                             <>
-                                <button
+                                <CButton 
                                     onClick={() => {
                                         setMenuOpen(false)
                                         handleLogin()
                                     }}
-                                    className={styles.login}
                                 >
                                     Login
-                                </button>
-
-                                <button
+                                </CButton>
+                                <CButton 
                                     onClick={() => {
                                         setMenuOpen(false)
                                         handleRegister()
                                     }}
-                                    className={styles.register}
                                 >
                                     Register
-                                </button>
+                                </CButton>
                             </>
                         )}
 
                     </div>
-
+                    <ThemeToggle />
                 </nav>
             )}
 

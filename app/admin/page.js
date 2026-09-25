@@ -29,47 +29,51 @@ export default function AdminPage() {
 
             <div className={styles.header}>
 
-                <h1>Administración</h1>
+                <div className={styles.left}>
+                    <h1>Administración</h1>
+                </div>
+                
+                <div className={styles.right}>
+                    <div className={styles.modeSelector}>
 
-                <div className={styles.modeSelector}>
+                        <button
+                            type="button"
+                            className={styles.modeButton}
+                            onClick={() => setModeIsOpen(prev => !prev)}
+                        >
+                            {mode}
 
-                    <button
-                        type="button"
-                        className={styles.modeButton}
-                        onClick={() => setModeIsOpen(prev => !prev)}
-                    >
-                        {mode}
+                            <FaCaretDown
+                                className={
+                                    modeIsOpen
+                                        ? styles.caretOpen
+                                        : styles.caret
+                                }
+                            />
+                        </button>
 
-                        <FaCaretDown
-                            className={
-                                modeIsOpen
-                                    ? styles.caretOpen
-                                    : styles.caret
-                            }
-                        />
-                    </button>
+                        {modeIsOpen && (
+                            <div className={styles.dropdown}>
+                                {modes.map((item) => (
+                                    <button
+                                        key={item}
+                                        type="button"
+                                        className={`${styles.dropdownItem} ${
+                                            mode === item
+                                                ? styles.selected
+                                                : ''
+                                        }`}
+                                        onClick={() =>
+                                            handleModeChange(item)
+                                        }
+                                    >
+                                        {item}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
-                    {modeIsOpen && (
-                        <div className={styles.dropdown}>
-                            {modes.map((item) => (
-                                <button
-                                    key={item}
-                                    type="button"
-                                    className={`${styles.dropdownItem} ${
-                                        mode === item
-                                            ? styles.selected
-                                            : ''
-                                    }`}
-                                    onClick={() =>
-                                        handleModeChange(item)
-                                    }
-                                >
-                                    {item}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
+                    </div>
                 </div>
             </div>
 

@@ -11,7 +11,7 @@
     max-width: 400px;
     padding: 40px;
     border-radius: 12px;
-    background-color: white;
+    background-color: var(--color-login-background);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -42,14 +42,14 @@
     width: 100%;
     box-sizing: border-box;
     padding: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-text);
     border-radius: 6px;
     font-size: 15px;
     outline: none;
 }
 
 .inputGroup input:focus {
-    border-color: #333;
+    border-color: var(--color-text);
 }
 
 .card button {
@@ -57,15 +57,15 @@
     padding: 12px;
     border: none;
     border-radius: 6px;
-    background-color: #222;
-    color: white;
+    background-color: var(--color-login-card);
+    color: var(--color-text);
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
 }
 
 .card button:hover {
-    background-color: #444;
+    background-color: var(--color-login-card-hover);
 }
 
 .card button:disabled {
@@ -89,7 +89,7 @@
     align-items: center;
     gap: 15px;
     margin: 25px 0;
-    color: #888;
+    color: var(--color-text);
 }
 
 .separator::before,
@@ -97,7 +97,7 @@
     content: '';
     flex: 1;
     height: 1px;
-    background-color: #ddd;
+    background-color: var(--color-text);
 }
 
 .separator span {
@@ -117,11 +117,11 @@
     margin: 25px 0 0;
     text-align: center;
     font-size: 14px;
-    color: #666;
+    color: var(--color-text);
 }
 
 .register a {
-    color: #222;
+    color: var(--color-text);
     font-weight: 600;
     text-decoration: none;
 }
@@ -146,11 +146,11 @@
     width: auto !important;
     padding: 6px 8px !important;
     background: transparent !important;
-    color: #555 !important;
+    color: var(--color-text) !important;
     font-size: 13px !important;
 }
 
 .showPassword:hover {
     background: transparent !important;
-    color: #222 !important;
+    color: var(--color-login-hover-password) !important;
 }

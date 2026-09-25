@@ -69,11 +69,11 @@ export default function RankingCell({
                 style={{
                     backgroundColor: point
                         ? `#${point.hexaColor}`
-                        : 'white'
+                        : 'var(--color-score-empty)'
                 }}
                 onClick={handleOpen}
             >
-                {point ? point.label : '—'}
+                {point ? point.label : ''}
             </button>
 
             {open && rect && (

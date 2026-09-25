@@ -8,7 +8,8 @@ import QueenNewModal from './QueenNewModal'
 import { participateService } from '@/lib/services/participateService'
 import { supabaseStorageService } from '@/lib/services/supabaseStorageService'
 import { wikiImgService} from '@/lib/services/wikiImgService'
-import { FaCaretDown } from 'react-icons/fa'
+import SeasonSelector from '@/components/SeasonSelector/SeasonSelector'
+import CButton from '@/components/CButton/CButton'
 
 export default function QueensAdmin() {
 
@@ -19,7 +20,6 @@ export default function QueensAdmin() {
     const [newQueen, setNewQueen] = useState(null)
     const [selectedSeason, setSelectedSeason] = useState(null)
     const [dropdownOpen, setDropdownOpen] = useState(false)
-    const [seasonSearch, setSeasonSearch] = useState('')
     const [seasons, setSeasons] = useState([])
 
     const fetchAllQueens = async (currentPage) => {
@@ -85,98 +85,34 @@ export default function QueensAdmin() {
         setDropdownOpen(false)
     }
 
-    const filteredSeasons = seasons.filter(season =>
-        season.name.toLowerCase().includes(seasonSearch.toLowerCase())
-    )
-
     return (
         <div>
             <div className={styles.queensHeader}>
 
-                <div className={styles.selector}>
-
-                    <button
-                        type="button"
-                        className={styles.selectorButton}
-                        onClick={() => setDropdownOpen(prev => !prev)}
-                    >
-                        <span>
-                            {selectedSeason
-                                ? `${selectedSeason.name}`
-                                : 'Filtrar por temporada'
-                            }
-                        </span>
-
-                        <FaCaretDown
-                            className={`${styles.caret} ${
-                                dropdownOpen ? styles.caretOpen : ''
-                            }`}
-                        />
-                    </button>
-
-                    {dropdownOpen && (
-                        <div className={styles.dropdown}>
-
-                            <div className={styles.searchContainer}>
-                                <input
-                                    type="text"
-                                    placeholder="Buscar temporada..."
-                                    value={seasonSearch}
-                                    onChange={(e) => setSeasonSearch(e.target.value)}
-                                    className={styles.searchInput}
-                                />
-                            </div>
-
-                            {filteredSeasons.map(season => (
-                                <button
-                                    key={season.id}
-                                    type="button"
-                                    className={`${styles.dropdownItem} ${
-                                        selectedSeason?.id === season.id
-                                            ? styles.selected
-                                            : ''
-                                    }`}
-                                    onClick={() => {
-                                        handleSeasonChange(season)
-                                        setSeasonSearch('')
-                                    }}
-                                >
-                                    <span>{season.name}</span>
-                                </button>
-                            ))}
-
-                            {filteredSeasons.length === 0 && (
-                                <div className={styles.noResults}>
-                                    No se encontraron temporadas
-                                </div>
-                            )}
-
-                        </div>
-                    )}
-
-                </div>
-
-                <button
-                    type="button"
-                    className={styles.addQueen}
+                <SeasonSelector
+                    seasons={seasons}
+                    selectedSeason={selectedSeason}
+                    dropdownOpen={dropdownOpen}
+                    setDropdownOpen={setDropdownOpen}
+                    handleSeasonChange={handleSeasonChange}
+                >
+                    Seleccionar una temporada
+                </SeasonSelector>
+                <CButton 
                     onClick={() => {
                         fetchAllQueens(1)
                         setSelectedSeason(null)
                     }}
                 >
-                    Limpiar filtros
-                </button>
-
-                <button
-                    type="button"
-                    className={styles.addQueen}
+                    Limpiar Filtros
+                </CButton>
+                <CButton 
                     onClick={() => {
                         setNewQueen(true)
                     }}
                 >
                     Añadir Reina
-                </button>
-
+                </CButton>
             </div>
 
             <div className={styles.queensList}>
@@ -210,27 +146,24 @@ export default function QueensAdmin() {
 
             {totalPages > 1 && (
                 <div className={styles.pagination}>
-
-                    <button
-                        type="button"
+                    <CButton 
                         disabled={page === 1 || loading}
                         onClick={() => setPage(page - 1)}
+                        className={styles.paginationButton}
                     >
                         ←
-                    </button>
-
+                    </CButton>
                     <span>
                         Página {page} de {totalPages}
                     </span>
 
-                    <button
-                        type="button"
+                    <CButton 
                         disabled={page === totalPages || loading}
                         onClick={() => setPage(page + 1)}
+                        className={styles.paginationButton}
                     >
-                        →
-                    </button>
-
+                       →
+                    </CButton>
                 </div>
             )}
             {newQueen && (

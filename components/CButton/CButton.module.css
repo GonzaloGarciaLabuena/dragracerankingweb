@@ -1,0 +1,28 @@
+.CButton {
+    padding: 13px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+
+    background-color: var(--color-surface);
+    color: var(--color-text);
+
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.CButton:hover {
+    background-color: var(--color-hover);
+    border-color: var(--color-text-secondary);
+}
+
+.CButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.CButton:disabled:hover {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+}

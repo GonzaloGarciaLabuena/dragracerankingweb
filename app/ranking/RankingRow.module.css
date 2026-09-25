@@ -1,0 +1,131 @@
+.rankingRow {
+    --row-height: 80px;
+    height: var(--row-height);
+}
+
+.queenCell {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+
+    width: 250px;
+    padding: 0 10px;
+
+    background-color: var(--color-table-background);
+}
+
+.queenContent {
+    width: 100%;
+    height: var(--row-height);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.queenPosition {
+    width: 10px;
+
+    display: flex;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+.imageContainer {
+    position: relative;
+
+    width: calc(var(--row-height) - 5px);
+    height: calc(var(--row-height) - 5px);
+    
+    flex-shrink: 0;
+}
+
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 40px;
+    height: 40px;
+
+    border: 5px solid #ddd;
+    border-top-color: #333;
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+    animation: spinQueen 0.8s linear infinite;
+}
+
+@keyframes spinQueen {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.queenImage {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    display: block;
+
+    border-radius: 10%;
+}
+
+.imageHidden {
+    visibility: hidden;
+}
+
+.queenInfo {
+    min-width: 0;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-text-queenInfo);
+}
+
+.queenName {
+    min-width: 0;
+    flex: 1;
+
+    font-weight: 600;
+
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: center;
+}
+
+.separator {
+    width: 1px;
+    height: calc(var(--row-height) - 30px);
+    background-color: var(--color-text);
+    flex-shrink: 0;
+}
+
+.queenScore {
+    flex-shrink: 0;
+
+    font-size: 17px;
+    font-weight: bold;
+    padding: 5px;
+    text-align: center;
+}
+
+.scoreCell {
+    padding: 0;
+
+    background-color: white;
+
+    text-align: center;
+    vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+
+    .queenCell {
+        position: static;
+    }
+}

@@ -1,8 +1,8 @@
 .header {
     width: 100%;
     height: 80px;
-    border-bottom: 1px solid #ddd;
-    background-color: white;
+    border-bottom: 1px solid var(--color-text);
+    background-color: var(--color-background-header);
 }
 
 /* =========================
@@ -36,11 +36,11 @@
     font-size: 20px;
     font-weight: bold;
     text-decoration: none;
-    color: black;
+    color: var(--color-logo-header);
 }
 
 .logo:hover {
-    color: rgb(14, 14, 177);
+    color: var(--color-logo-hover-header);
     transition: color 0.2s;
 }
 
@@ -51,7 +51,6 @@
 
 .nav a {
     text-decoration: none;
-    color: #333;
 }
 
 .auth {
@@ -62,42 +61,42 @@
 
 .auth a {
     text-decoration: none;
-    color: #333;
 }
 
 .buttonHeader {
     padding: 8px 14px;
     border-radius: 6px;
-    background-color: rgb(14, 14, 177);
-    color: white !important;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-text);
 }
 
 .buttonHeader:hover {
-    background-color: rgb(116, 116, 216);
+    background-color: var(--color-hover);
     transition: background-color 0.2s;
 }
 
 .register {
     padding: 8px 14px;
     border-radius: 6px;
-    background-color: rgb(14, 14, 177);
-    color: white !important;
+    background-color: var(--color-button-header);
+    color: var(--color-text-button-header);
 }
 
 .register:hover {
-    background-color: rgb(116, 116, 216);
+    background-color: var(--color-button-header);
     transition: background-color 0.2s;
 }
 
 .login {
     padding: 8px 14px;
     border-radius: 6px;
-    background-color: rgb(97, 97, 228);
-    color: white !important;
+    background-color: var(--color-button-header);
+    color: var(--color-text-button-header);
 }
 
 .login:hover {
-    background-color: rgb(116, 116, 216);
+    background-color: var(--color-button-header);
     transition: background-color 0.2s;
 }
 
@@ -105,13 +104,13 @@
 .cerrarSesion {
     padding: 8px 14px;
     border-radius: 6px;
-    background-color: rgb(97, 97, 228);
-    color: white !important;
+    background-color: var(--color-button-header);
+    color: var(--color-text-button-header);
 }
 
 .cerrarSesion:hover {
-    background-color: rgb(116, 116, 216);
-    transition: background-color 0.2s;
+    background-color: var(--color-button-header);
+    transition: var(--color-text-button-header);
 }
 
 .profile {
@@ -120,8 +119,7 @@
     gap: 8px;
     font-size: 16px;
     font-weight: bold;
-    text-decoration: none;
-    color: black; 
+    color: var(--color-text-header); 
     white-space: nowrap;  
 }
 
@@ -167,7 +165,7 @@
         text-decoration: none;
         font-size: 22px;
         font-weight: bold;
-        color: black;
+        color: var(--color-logo-header);
     }
 
     .navContainer{
@@ -183,7 +181,7 @@
         font-size: 30px;
         cursor: pointer;
         padding: 5px;
-        color: black;
+        color: var(--color-button);
     }
 
     .menuIcon {
@@ -191,14 +189,26 @@
         height: 30px;
         transition: transform 0.2s ease;
     }
+    
+    .menuIconWhite {
+        display: none;
+    }
+
+    html[data-theme="dark"] .menuIconBlack {
+        display: none;
+    }
+
+    html[data-theme="dark"] .menuIconWhite {
+        display: block;
+    }
 
     .mobileNav {
         display: flex;
         flex-direction: column;
         width: fit-content;
         padding: 10px;
-        background-color: white;
-        border-color: #ddd;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-text);
         border-width: 1px;
         border-bottom-left-radius: 20px;
         gap: 5px;
@@ -214,10 +224,10 @@
 
     .mobileNav a {
         text-decoration: none;
-        color: black;
+        color: var(--color-text);
         padding: 12px 10px;
         text-align: center;
-        border-bottom: 1px solid gray;
+        border-bottom: 1px solid var(--color-text);
     }
 
     .mobileNav a:last-child {

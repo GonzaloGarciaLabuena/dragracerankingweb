@@ -1,6 +1,6 @@
-import styles from './page.module.css'
+import styles from './RankingTable.module.css'
 import RankingRow from './RankingRow'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export default function RankingTable({
     user,
@@ -12,7 +12,7 @@ export default function RankingTable({
     setPointsMap,
     activeCell,
     setActiveCell,
-    saveRanking
+    tableRef
 }) {
     const [mainTitle, setMainTitle] = useState('')
     const [subtitle, setSubtitle] = useState('')
@@ -29,13 +29,13 @@ export default function RankingTable({
             if (currentQueenId === queenId) {
                 const episode = episodes.find(episode => episode.id === currentEpisodeId)
                 if (episode?.esFinal) continue
-
+                if (point.id === 'point7') continue //Es un punto "N/A", no debe ser contabilizado
                 totalScore += point.value 
                 totalEpisodes++
             }
         }
 
-        return totalEpisodes > 0 ? (totalScore / totalEpisodes).toFixed(3) : 0.000
+        return totalEpisodes > 0 ? (totalScore / totalEpisodes).toFixed(3) : (0.000).toFixed(3)
     }
 
     const rankedQueens = [...queens]
@@ -69,25 +69,15 @@ export default function RankingTable({
         setMainTitle(main)
         setSubtitle(sub)
     }
-    
+
     useEffect(() => {
         setTableName(season?.name, user?.username)
     }, [season, user])
 
     return (
         <div className={styles.tableContainer}>
-
-            {saveRanking && (
-                <button
-                    type="button"
-                    className={styles.save}
-                    onClick={async () => await saveRanking()}
-                >
-                    Guardar ranking
-                </button>
-            )}
             
-            <table className={styles.rankingTable}>
+            <table ref={tableRef} className={styles.rankingTable}>
 
                 <thead>
                     <tr>

@@ -18,42 +18,56 @@ export async function GET(request) {
         userId = user.id
     }
 
-    // Obtener todos los puntos del usuario
-    const { data, error } = await supabase
-        .from('points_per_episode')
-        .select(`
-            point_type_id!inner(
-                id,
-                value
-            ),
-            ppe_reference!inner(
-                season_id!inner(
-                    id,
-                    name,
-                    franchise,
-                    year
-                ),
-                episode_id!inner(
-                    esFinal
-                ),
-                queen_id!inner(
-                    id,
-                    name
-                )
-            )
-        `)
-        .eq('client_id', userId)
+    const pageSize = 1000
+    let from = 0
+    let allData = []
 
-    if (error) {
-        return NextResponse.json(
-            { error: error.message },
-            { status: 500 }
-        )
+    while (true) {
+        const { data, error } = await supabase
+            .from('points_per_episode')
+            .select(`
+                point_type_id!inner(
+                    id,
+                    value
+                ),
+                ppe_reference!inner(
+                    season_id!inner(
+                        id,
+                        name,
+                        franchise,
+                        year
+                    ),
+                    episode_id!inner(
+                        esFinal
+                    ),
+                    queen_id!inner(
+                        id,
+                        name
+                    )
+                )
+            `)
+            .eq('client_id', userId)
+            .range(from, from + pageSize - 1)
+
+        if (error) {
+            return NextResponse.json(
+                { error: error.message },
+                { status: 500 }
+            )
+        }
+
+        allData.push(...data)
+
+        if (data.length < pageSize) {
+            break
+        }
+
+        from += pageSize
     }
 
     const imageMap = await queensImgMap(supabase)
 
-    const seasons = createCompleteSeasonMap(data, imageMap)
+    const seasons = createCompleteSeasonMap(allData, imageMap)
 
     const hallOfFame = await hallOfFameArray(seasons)
     
@@ -74,7 +88,7 @@ const createCompleteSeasonMap = (data, imageMap) => {
         }
 
         const queens = seasons.get(season.id)
-
+        
         if (!queens.has(queen.id)) {
             const img = imageMap.get(`${season.id}|${queen.id}`)
             const seasonName = season.name.replace(/^rupaul's /i, '')
@@ -90,15 +104,16 @@ const createCompleteSeasonMap = (data, imageMap) => {
                 winner: false
             })
         }
-
+        
         const currentQueen = queens.get(queen.id)
 
-        if(pointType.id !== 'point9'){
+        if (esFinal) {
+            if (pointType.id === 'point9') {
+                currentQueen.winner = true
+            }
+        } else if (pointType.id !== 'point7'){
             currentQueen.nEpisodes += 1
             currentQueen.score += pointType.value
-        }
-        if (esFinal && pointType.id === 'point9') {
-            currentQueen.winner = true
         }
     })
 
@@ -160,17 +175,7 @@ const hallOfFameArray = async (seasons) => {
     }
 
     hallOfFame.sort((a, b) => {
-        // Primero por franquicia
-        const franchiseCompare = a.winner.franchise.localeCompare(
-            b.winner.franchise
-        )
-
-        if (franchiseCompare !== 0) {
-            return franchiseCompare
-        }
-
-        // Después por año
-        return a.winner.year - b.winner.year
+      return b.winner.year - a.winner.year
     })
     
     return hallOfFame

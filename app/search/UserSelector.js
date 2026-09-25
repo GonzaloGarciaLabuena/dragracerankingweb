@@ -1,4 +1,4 @@
-import styles from './page.module.css'
+import styles from './UserSelector.module.css'
 import { FaCaretDown } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 

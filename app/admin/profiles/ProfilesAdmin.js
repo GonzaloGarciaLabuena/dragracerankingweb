@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import styles from './profiles.module.css'
 import { profileService } from '@/lib/services/profileService'
+import CButton from '@/components/CButton/CButton'
 
 export default function ProfilesAdmin() {
 
@@ -149,13 +150,6 @@ export default function ProfilesAdmin() {
         <div className={styles.container}>
             <h2>Administrar perfiles</h2>
 
-            <button
-                className={styles.clearFilters}
-                onClick={clearFilters}
-            >
-                Limpiar filtros
-            </button>
-
             <div className={styles.profilesList}>
 
                 <div className={styles.header}>
@@ -213,7 +207,13 @@ export default function ProfilesAdmin() {
                         />
                     </div>
 
-                    <span>Acciones</span>
+                    <div>
+                        <span>Acciones</span>
+
+                        <CButton onClick={clearFilters}>
+                            Limpiar filtros
+                        </CButton>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -276,21 +276,18 @@ export default function ProfilesAdmin() {
                                     </span>
 
                                     <div className={styles.actions}>
-                                        <button
-                                            className={styles.saveButton}
+                                        <CButton 
                                             onClick={() =>
                                                 saveEdit(profile.id)
                                             }
                                         >
                                             Guardar
-                                        </button>
-
-                                        <button
-                                            className={styles.cancelButton}
+                                        </CButton>
+                                        <CButton 
                                             onClick={cancelEditing}
                                         >
                                             Cancelar
-                                        </button>
+                                        </CButton>
                                     </div>
                                 </>
                             ) : (
@@ -318,23 +315,21 @@ export default function ProfilesAdmin() {
                                     </span>
 
                                     <div className={styles.actions}>
-                                        <button
-                                            className={styles.editButton}
+                                        <CButton 
                                             onClick={() =>
                                                 startEditing(profile)
                                             }
                                         >
                                             Editar
-                                        </button>
-
-                                        <button
+                                        </CButton>
+                                        <CButton 
                                             className={styles.deleteButton}
                                             onClick={() =>
                                                 deleteProfile(profile.id)
                                             }
                                         >
                                             Eliminar
-                                        </button>
+                                        </CButton>
                                     </div>
                                 </>
                             )}

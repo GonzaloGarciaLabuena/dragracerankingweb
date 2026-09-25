@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase/client'
 import styles from './page.module.css'
 import { profileService } from '@/lib/services/profileService'
 import AvatarChangeModal from './AvatarChangeModal'
+import CButton from '@/components/CButton/CButton'
 
 export default function ProfilePage() {
 
@@ -84,12 +85,11 @@ export default function ProfilePage() {
 
     return (
         <main className={styles.container}>
+            <header className={styles.header}>
+                <h1>Mi perfil</h1>
+            </header>
 
             <div className={styles.profile}>
-
-                <header className={styles.header}>
-                    <h1>Mi perfil</h1>
-                </header>
 
                 {error && (
                     <p className={styles.error}>
@@ -97,14 +97,14 @@ export default function ProfilePage() {
                     </p>
                 )}
 
-                <section className={styles.section}>
+                <section className={styles.left}>
                     <h2>Datos personales</h2>
 
                     <div className={styles.info}>
                         <span className={styles.label}>
                             Usuario
                         </span>
-
+                        <span className={styles.separator}>&nbsp;</span>
                         <span>
                             {user.full_name}
                         </span>
@@ -113,53 +113,59 @@ export default function ProfilePage() {
                         <span className={styles.label}>
                             Nombre Drag
                         </span>
+                        <span className={styles.separator}>&nbsp;</span>
+                        <div className={styles.editableValue}>
+                            {editingUsername ? (
+                                <input
+                                    type="text"
+                                    value={username}
+                                    className={styles.input}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
+                            ) : (
+                                <span>
+                                    {user.username}
+                                </span>
+                            )}
+                        </div>
 
-                        {editingUsername ? (
-                            <input
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        ) : (
-                            <span>
-                                {user.username}
-                            </span>
-                        )}
-
-                        <button
-                            type="button"
+                        <CButton 
+                            className={styles.editButton}
                             onClick={() => {
                                 if (editingUsername) {
                                     handleSaveUsername()
-                                }else{
+                                } else {
                                     setUsername(user.username)
-                                    setEditingUsername(!editingUsername)
+                                    setEditingUsername(true)
                                 }
                             }}
                         >
                             {editingUsername ? 'Guardar' : 'Editar'}
-                        </button>
+                        </CButton>
                     </div>
                     <div className={styles.info}>
                         <span className={styles.label}>
                             Avatar
                         </span>
-                        <img
-                            src={user.avatar_url || '/default_avatar.svg'}
-                            alt={user.username}
-                            className={styles.queenImage}
-                            draggable={false}
-                        />
-                        <button
-                            type="button"
+                        <span className={styles.separator}>&nbsp;</span>
+                        <div className={styles.avatarValue}>
+                            <img
+                                src={user.avatar_url || '/default_avatar.svg'}
+                                alt={user.username}
+                                className={styles.queenImage}
+                                draggable={false}
+                            />
+                        </div>
+                        <CButton 
+                            className={styles.editButton}
                             onClick={() => setAvatarModalOpen(true)}
                         >
                             Editar
-                        </button>
+                        </CButton>
                     </div>
                 </section>
 
-                <section className={styles.section}>
+                <section className={styles.right}>
                     <h2>Estadísticas</h2>
 
                     <div className={styles.comingSoon}>
@@ -170,14 +176,12 @@ export default function ProfilePage() {
                 </section>
 
                 <section className={styles.section}>
-                    <h2>Cuenta</h2>
-
-                    <button
+                    <CButton 
                         className={styles.logout}
                         onClick={handleLogout}
                     >
                         Cerrar sesión
-                    </button>
+                    </CButton>
                 </section>
 
                 {avatarModalOpen && (

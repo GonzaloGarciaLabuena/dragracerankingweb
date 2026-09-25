@@ -61,27 +61,29 @@ export default function HallofFame() {
     }, [])
 
     return (
-        <div className={styles.pageContent}>
+        <div>
 
-            <h1>Hall of Fame</h1>
+            <h1 className={styles.title}>Hall of Fame</h1>
 
-            <UserSelector
-                users={users}
-                selectedUser={selectedUser}
-                dropdownOpen={dropdownOpenUser}
-                setDropdownOpen={setDropdownOpenUser}
-                handleUserChange={handleUserChange}
-            />
+            <div className={styles.options}>
+                <UserSelector
+                    users={users}
+                    selectedUser={selectedUser}
+                    dropdownOpen={dropdownOpenUser}
+                    setDropdownOpen={setDropdownOpenUser}
+                    handleUserChange={handleUserChange}
+                />
 
-            <button
-                type="button"
-                className={styles.buttonCustom}
-                onClick={() => {
-                    handleUserChange(null)
-                }}
-            >
-                Tu Hall of Fame
-            </button>
+                <button
+                    type="button"
+                    className={styles.buttonHall}
+                    onClick={() => {
+                        handleUserChange(null)
+                    }}
+                >
+                    Tu Hall of Fame
+                </button>
+            </div>
 
             {!loading && hallOfFame.length === 0 && (
                 <p>No hay datos para mostrar.</p>

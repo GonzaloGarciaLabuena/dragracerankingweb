@@ -3,21 +3,23 @@
     inset: 0;
 
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 
-    background-color: rgba(0, 0, 0, 0.45);
+    padding-top: 50px;
+
+    background-color: rgba(0, 0, 0, 0.8);
 
     z-index: 1000;
 }
 
 .modal {
     width: 90%;
-    max-width: 450px;
+    max-width: 550px;
 
     padding: 1.5rem;
 
-    background-color: white;
+    background-color: var(--color-admin-modal-background);
     border-radius: 10px;
 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -34,65 +36,121 @@
     gap: 0.5rem;
 }
 
-.formGroup label {
+.formGroup .formInputContainer {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.formLabel {
     font-weight: 600;
 }
 
-.formGroup input {
+.formInput {
     width: 100%;
     box-sizing: border-box;
 
     padding: 0.7rem 0.8rem;
-
-    border: 1px solid #ccc;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-text);
     border-radius: 6px;
 
     font-size: 1rem;
 }
 
-.formGroup input:focus {
+.formInput:focus {
     outline: none;
     border-color: #777;
 }
 
+.ImgContainer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
 .modalActions {
     display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-
-    margin-top: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
 }
 
-.modalActions button {
-    padding: 0.6rem 1rem;
+/* SELECTOR */
 
-    border: none;
-    border-radius: 6px;
-
-    cursor: pointer;
+.dropdown {
+    max-height: 200px !important;
+    left: auto !important;
+    right: 0 !important;
 }
 
-.modalActions button[type='button'] {
-    background-color: #eee;
+/* IMAGEN */
+
+.queenimg {
+    width: 100px;
+    height: 100px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+    margin-bottom: 10px;
 }
 
-.modalActions button[type='submit'] {
-    background-color: #222;
-    color: white;
-}
+/* TEMPORADA */
 
-.modalActions button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.checkboxLabel {
+.seasonContainer {
     display: flex;
     align-items: center;
-    gap: 8px;
-    cursor: pointer;
+    justify-content: space-between;
+    gap: 10px;
+
+    min-width: 0;
 }
 
-.checkboxLabel input {
+.seasonName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.checkbox {
+    appearance: none;
+
+    width: 20px;
+    height: 20px;
+
+    margin: 0;
+
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+
+    background-color: var(--color-surface);
+
     cursor: pointer;
+
+    display: grid;
+    place-content: center;
+}
+
+.checkbox:hover {
+    background-color: var(--color-hover);
+    border-color: var(--color-text-secondary);
+}
+
+.checkbox:checked {
+    background-color: var(--color-hover);
+    border-color: var(--color-text-secondary);
+}
+
+.checkbox:checked::after {
+    content: '';
+
+    width: 5px;
+    height: 10px;
+
+    border: solid var(--color-text);
+    border-width: 0 2px 2px 0;
+
+    transform: rotate(45deg);
 }

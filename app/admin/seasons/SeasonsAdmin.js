@@ -4,12 +4,12 @@ import { seasonService } from '@/lib/services/seasonService'
 import { episodeService } from '@/lib/services/episodeService'
 import { ppeService } from '@/lib/services/ppeService'
 import { useEffect, useState } from 'react'
-import { FaCaretDown } from 'react-icons/fa'
 import styles from './seasons.module.css'
 import EpisodeEditModal from './EpisodeEditModal'
-import EpisodeNewModal from './EpisodeNewModal'
-import SeasonNewModal from './SeasonNewModal'
-import SeasonEditModal from './SeasonEditModal'
+import EpisodeModal from './EpisodeModal' 
+import SeasonMondal from './SeasonModal'
+import SeasonSelector from '@/components/SeasonSelector/SeasonSelector'
+import CButton from '@/components/CButton/CButton'
 
 export default function SeasonsAdmin() {
 
@@ -56,105 +56,47 @@ export default function SeasonsAdmin() {
 
             <h2>Administrar temporadas</h2>
 
-            {/* Selector de temporada */}
+            <div className={styles.options}>
+                <div className={styles.left}>
+                    <SeasonSelector
+                        seasons={seasons}
+                        selectedSeason={selectedSeason}
+                        dropdownOpen={dropdownOpen}
+                        setDropdownOpen={setDropdownOpen}
+                        handleSeasonChange={handleSeasonChange}
+                    >
+                        Seleccionar
+                    </SeasonSelector>
+                </div>
+                <div className={styles.right}>
+                    <CButton 
+                        onClick={() => {
+                            setNewSeason(true)
+                        }}
+                    >
+                        Añadir
+                    </CButton>
 
-            <div className={styles.selector}>
+                    <CButton 
+                        disabled={!selectedSeason}
+                        onClick={() => {
+                            setEditSeason(true)
+                        }}
+                    >
+                        Editar
+                    </CButton>
 
-                <button
-                    type="button"
-                    className={styles.selectorButton}
-                    onClick={() => setDropdownOpen(prev => !prev)}
-                >
-                    <span>
-                        {selectedSeason
-                            ? `${selectedSeason.name}`
-                            : 'Selecciona una temporada'
-                        }
-                    </span>
-
-                    <FaCaretDown
-                        className={`${styles.caret} ${
-                            dropdownOpen ? styles.caretOpen : ''
-                        }`}
-                    />
-                </button>
-
-                <button
-                    type="button"
-                    className={styles.addEpisode}
-                    onClick={() => {
-                        setNewSeason(true)
-                    }}
-                >
-                    Añadir nueva temporada
-                </button>
-
-                <button
-                    type="button"
-                    className={styles.addEpisode}
-                    disabled={!selectedSeason}
-                    onClick={() => {
-                        setEditSeason(true)
-                    }}
-                >
-                    Editar temporada
-                </button>
-
-                <button
-                    type="button"
-                    className={styles.addEpisode}
-                    disabled={!selectedSeason}
-                    onClick={ async () => {
-                        await ppeService.publishRanking(selectedSeason)
-                        alert("Temporada " + selectedSeason.name + " publicada correctamente")
-                    }}
-                >
-                    Publicar temporada
-                </button>
-
-                {dropdownOpen && (
-                    <div className={styles.dropdown}>
-
-                        <div className={styles.searchContainer}>
-                            <input
-                                type="text"
-                                placeholder="Buscar temporada..."
-                                value={seasonSearch}
-                                onChange={(e) => setSeasonSearch(e.target.value)}
-                                className={styles.searchInput}
-                            />
-                        </div>
-
-                        {filteredSeasons.map(season => (
-                            <button
-                                key={season.id}
-                                type="button"
-                                className={`${styles.dropdownItem} ${
-                                    selectedSeason?.id === season.id
-                                        ? styles.selected
-                                        : ''
-                                }`}
-                                onClick={() => {
-                                    handleSeasonChange(season)
-                                    setSeasonSearch('')
-                                }}
-                            >
-                                <span>{season.name}</span>
-                            </button>
-                        ))}
-
-                        {filteredSeasons.length === 0 && (
-                            <div className={styles.noResults}>
-                                No se encontraron temporadas
-                            </div>
-                        )}
-
-                    </div>
-                )}
-
+                    <CButton 
+                        disabled={!selectedSeason}
+                        onClick={ async () => {
+                            await ppeService.publishRanking(selectedSeason)
+                            alert("Temporada " + selectedSeason.name + " publicada correctamente")
+                        }}
+                    >
+                        Publicar
+                    </CButton>
+                </div>
             </div>
-
-            {/* Temporada seleccionada */}
 
             {selectedSeason && (
                 <div className={styles.seasonContent}>
@@ -168,32 +110,28 @@ export default function SeasonsAdmin() {
                         </p>
                     </div>
 
-                    <div className={styles.episodes}>
-
-                        <div className={styles.episodesHeader}>
+                    <div className={styles.options}>
+                        <div className={styles.left}>
                             <h4>Episodios</h4>
-
-                            <button
-                                type="button"
-                                className={styles.addEpisode}
+                            <CButton 
                                 onClick={() => {
                                     setNewEpisode(true)
                                 }}
                             >
-                                Añadir episodio
-                            </button>
-
-                            <button
-                                type="button"
-                                className={styles.addEpisode}
+                                Añadir
+                            </CButton>
+                            <CButton 
                                 onClick={ async () => {
                                     await episodeService.deleteLastEpisode(selectedSeason.id);
                                     updateEpisodes();
                                 }}
                             >
-                                Eliminar ultimo episodio
-                            </button>
+                                Eliminar
+                            </CButton>
                         </div>
+                    </div>
+
+                    <div className={styles.episodes}>
 
                         {episodes.map(episode => (
                             <button
@@ -217,8 +155,20 @@ export default function SeasonsAdmin() {
                 </div>
             )}
 
+            {newEpisode && (
+                <EpisodeModal
+                    onClose={() => setNewEpisode(null)}
+
+                    onSave={ async (newEpisode) => {
+                        await episodeService.createEpisode(selectedSeason.id, newEpisode);
+                        updateEpisodes();
+                        setNewEpisode(null)
+                    }}
+                />
+            )}
+
             {editingEpisode && (
-                <EpisodeEditModal
+                <EpisodeModal
                     episode={editingEpisode}
                     onClose={() => setEditingEpisode(null)}
 
@@ -231,20 +181,8 @@ export default function SeasonsAdmin() {
                 />
             )}
 
-            {newEpisode && (
-                <EpisodeNewModal
-                    onClose={() => setNewEpisode(null)}
-
-                    onSave={ async (newEpisode) => {
-                        await episodeService.createEpisode(selectedSeason.id, newEpisode);
-                        updateEpisodes();
-                        setNewEpisode(null)
-                    }}
-                />
-            )}
-
             {newSeason && (
-                <SeasonNewModal
+                <SeasonMondal
                     onClose={() => setNewSeason(null)}
 
                     onSave={ async ({ name, franchise, year }) => {
@@ -256,7 +194,7 @@ export default function SeasonsAdmin() {
             )}
 
             {editSeason && (
-                <SeasonEditModal
+                <SeasonMondal
                     season = {selectedSeason}
                     onClose={() => setEditSeason(null)}
                     onSave={ async ({ name, franchise, year }) => {

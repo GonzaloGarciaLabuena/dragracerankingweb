@@ -1,20 +1,107 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    /* Fondo */
+    --color-background: #b1afaf;
+    --color-surface: #ffffff;
+    --color-surface-secondary: #f5f5f5;
+
+    /* Texto */
+    --color-text: #222222;
+    --color-text-secondary: #666666;
+
+    /* Bordes */
+    --color-border: #dddddd;
+
+    /* Botones */
+    --color-button: #222222;
+    --color-button-text: #ffffff;
+
+    /* Estados */
+    --color-hover: #eeeeee;
+    --shadow-box: #222222;
+
+    --color-table-background: #ffffff; 
+    --color-text-queenInfo: #222222;
+
+    --color-background-header: #ffffff;
+    --color-logo-header: #000000;
+    --color-logo-hover-header: #555555;
+
+    --color-admin-queen-background: #ffffff;
+    --color-admin-queen-background-hover: #d3d3d3;
+    --color-admin-queen-border: #000000;
+
+    --color-admin-modal-background: #f5f5f5;
+
+    --color-admin-profile-background: #f5f5f5;
+    --color-admin-profile-header: #d3d3d3;
+    --color-admin-profile-hover: #f5f5f5;
+
+    --color-profile-background: #f5f5f5;
+    --color-profile-background-secondary: #d3d3d3;
+
+    --color-login-background: #d3d3d3;
+    --color-login-card: #f5f5f5;
+    --color-login-card-hover: #d6d6d6;
+    --color-login-hover-password: #555555;
+}
+
+html[data-theme="dark"] {
+    --color-background: #181818;
+    --color-surface: #242424;
+    --color-surface-secondary: #303030;
+
+    --color-text: #eeeeee;
+    --color-text-secondary: #aaaaaa;
+
+    --color-border: #444444;
+
+    --color-button: #eeeeee;
+    --color-button-text: #181818;
+
+    --color-hover: #383838;
+    --shadow-box: #eeeeee;
+
+    --color-table-background: #000000; 
+    --color-score-header-primary: #303030;
+    --color-score-header-secondary: #535353;
+    --color-score-header-text: #eeeeee;
+    --color-text-queenInfo: #eeeeee;
+    --color-score-empty: #000000;
+
+    --color-background-header: #000000;
+    --color-logo-header: #ffffff;
+    --color-logo-hover-header: #dddddd;
+
+    --color-admin-queen-background: #000000;
+    --color-admin-queen-background-hover: #252525;
+    --color-admin-queen-border: #ffffff;
+
+    --color-admin-modal-background: #303030;
+
+    --color-admin-profile-background: #000000;
+    --color-admin-profile-header: #303030;
+    --color-admin-profile-hover: #252525;
+
+    --color-profile-background: #000000;
+    --color-profile-background-secondary: #303030;
+    --color-profile-hover: #252525;
+
+    --color-login-background: #535353;
+    --color-login-card: #252525;
+    --color-login-card-hover: #363636;
+    --color-login-hover-password: #aaaaaa;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+
+    background-color: var(--color-background);
+    color: var(--color-text);
 }

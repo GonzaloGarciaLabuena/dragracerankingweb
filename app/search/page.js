@@ -9,7 +9,7 @@ import { ppeService } from '@/lib/services/ppeService'
 import { episodeService } from '@/lib/services/episodeService'
 import { profileService } from '@/lib/services/profileService'
 import UserSelector from './UserSelector'
-import SeasonSelector from '../ranking/SeasonSelector'
+import SeasonSelector from '@/components/SeasonSelector/SeasonSelector'
 import RankingTable from '../ranking/RankingTable'
 
 export default function Search() {
@@ -170,7 +170,9 @@ export default function Search() {
                     dropdownOpen={dropdownOpenSeason}
                     setDropdownOpen={setDropdownOpenSeason}
                     handleSeasonChange={handleSeasonChange}
-                />
+                >
+                    Seleccionar temporada
+                </SeasonSelector>
             )}
 
             {selectedSeason && (

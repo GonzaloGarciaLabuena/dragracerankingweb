@@ -1,4 +1,4 @@
-import styles from './page.module.css'
+import styles from './RankingRow.module.css'
 import RankingCell from './RankingCell'
 import { useEffect, useState } from 'react'
 export default function RankingRow({
@@ -15,7 +15,7 @@ export default function RankingRow({
     const [imageLoading, setImageLoading] = useState(true)
 
     return (
-        <tr>
+        <tr className={styles.rankingRow}>
 
             <td className={styles.queenCell}>
 
@@ -48,7 +48,7 @@ export default function RankingRow({
                         <span className={styles.queenName}>
                             {queen.name}
                         </span>
-
+                        <span className={styles.separator}>&nbsp;</span>
                         <span className={styles.queenScore}>
                             {queen.score}
                         </span>
@@ -64,10 +64,7 @@ export default function RankingRow({
                 const key = `${queen.id}|${episode.id}`
 
                 return (
-                    <td
-                        key={episode.id}
-                        className={styles.scoreCell}
-                    >
+                    <td key={episode.id} className={styles.scoreCell}>
                         <RankingCell
                             esFinal={episode.esFinal}
                             cellId={key}

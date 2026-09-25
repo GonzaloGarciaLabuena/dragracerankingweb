@@ -5,6 +5,8 @@ import styles from './modal.module.css'
 import { FaCaretDown } from 'react-icons/fa'
 import { seasonService } from '@/lib/services/seasonService'
 import { wikiImgService } from "@/lib/services/wikiImgService";
+import SeasonSelector from '@/components/SeasonSelector/SeasonSelector'
+import CButton from '@/components/CButton/CButton'
 
 export default function QueenNewModal({
     season,
@@ -17,7 +19,6 @@ export default function QueenNewModal({
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const [seasons, setSeasons] = useState([])
     const [imagePreview, setImagePreview] = useState(null)
-    const [seasonSearch, setSeasonSearch] = useState('')
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -29,10 +30,6 @@ export default function QueenNewModal({
         setSelectedSeason(seasonChange)
         setDropdownOpen(false)
     }
-    
-    const filteredSeasons = seasons.filter(season =>
-        season.name.toLowerCase().includes(seasonSearch.toLowerCase())
-    )
 
     const fetchSeasons = async () => {
         try {
@@ -61,133 +58,89 @@ export default function QueenNewModal({
                 <form onSubmit={handleSubmit}>
 
                     <div className={styles.formGroup}>
-                        <label htmlFor="queenName">
-                            Nombre
-                        </label>
+                        <div className={styles.formInputContainer}>   
+                            <label className={styles.formLabel}>
+                                Nombre
+                            </label>
 
-                        <input
-                            id="queenName"
-                            type="text"
-                            onChange={(e) => setName(e.target.value)}
-                            autoFocus
-                        />
-                    </div>
-                    {imagePreview && (
-                        <img className={styles.queenimg}
-                            src={imagePreview}
-                            alt="Imagen de la reina"
-                        />
-                    )}
-                    <div className={styles.selector}>
-
-                        <label htmlFor="queenName">
-                            En temporada
-                        </label>
-
-                        <button
-                            type="button"
-                            className={styles.selectorButton}
-                            onClick={() => setDropdownOpen(prev => !prev)}
-                        >
-                            <span>
-                                {selectedSeason
-                                    ? `${selectedSeason.name}`
-                                    : 'Selecciona una temporada'
-                                }
-                            </span>
-
-                            <FaCaretDown
-                                className={`${styles.caret} ${
-                                    dropdownOpen ? styles.caretOpen : ''
-                                }`}
+                            <input
+                                id="queenName"
+                                type="text"
+                                onChange={(e) => setName(e.target.value)}
+                                className={styles.formInput}
+                                autoFocus
                             />
-                        </button>
+                        </div> 
 
-                        {dropdownOpen && (
-                            <div className={styles.dropdown}>
+                        <div className={styles.formInputContainer}>
+                            <label className={styles.formLabel}>
+                                Temporada
+                            </label>
 
-                                <div className={styles.searchContainer}>
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar temporada..."
-                                        value={seasonSearch}
-                                        onChange={(e) => setSeasonSearch(e.target.value)}
-                                        className={styles.searchInput}
-                                    />
-                                </div>
+                            <div className={styles.seasonContainer}>
+                                <span className={styles.seasonName}>
+                                    {selectedSeason?.name}
+                                </span>
 
-                                {filteredSeasons.map(season => (
-                                    <button
-                                        key={season.id}
-                                        type="button"
-                                        className={`${styles.dropdownItem} ${
-                                            selectedSeason?.id === season.id
-                                                ? styles.selected
-                                                : ''
-                                        }`}
-                                        onClick={() => {
-                                            handleSeasonChange(season)
-                                            setSeasonSearch('')
-                                        }}
-                                    >
-                                        <span>{season.name}</span>
-                                    </button>
-                                ))}
-
-                                {filteredSeasons.length === 0 && (
-                                    <div className={styles.noResults}>
-                                        No se encontraron temporadas
-                                    </div>
-                                )}
-
+                                <SeasonSelector
+                                    seasons={seasons}
+                                    selectedSeason={selectedSeason}
+                                    dropdownOpen={dropdownOpen}
+                                    setDropdownOpen={setDropdownOpen}
+                                    handleSeasonChange={handleSeasonChange}
+                                    dropLeft
+                                />
                             </div>
-                        )}
+                        </div>
 
+                        <div className={styles.formInputContainer}>
+                            <label className={styles.formLabel}>
+                                Url
+                            </label>
+
+                            <input
+                                id="urlImg"
+                                type="text"
+                                onChange={(e) => setUrl(e.target.value)}
+                                className={styles.formInput}
+                            />
+                        </div>
+                        <div className={styles.ImgContainer}>
+                            {imagePreview ? (
+                                <img
+                                    className={styles.queenimg}
+                                    src={imagePreview}
+                                    alt="Imagen de la reina"
+                                />
+                            ) : (
+                                <>
+                                    <img
+                                        className={`${styles.queenimg} ${styles.defaultAvatarBlack}`}
+                                        src="/default-avatar-black.svg"
+                                        alt="Imagen por defecto"
+                                    />
+
+                                    <img
+                                        className={`${styles.queenimg} ${styles.defaultAvatarWhite}`}
+                                        src="/default-avatar-white.svg"
+                                        alt="Imagen por defecto"
+                                    />
+                                </>
+                            )}
+                        </div>
                     </div>
-
-                    <div className={styles.formGroup}>
-                        <label htmlFor="queenName">
-                            Url
-                        </label>
-
-                        <input
-                            id="urlImg"
-                            type="text"
-                            onChange={(e) => setUrl(e.target.value)}
-                            autoFocus
-                        />
-                    </div>
-
                     <div className={styles.modalActions}>
-
-                        <button
-                            type="button"
+                        <CButton 
                             onClick={onClose}
                         >
                             Cancelar
-                        </button>
-
-                        <button
-                            type="button"
-                            disabled={!name.trim() || !selectedSeason || !url}
-                            onClick={async () => {
-                                try {
-                                    setImagePreview(url)
-                                } catch (error) {
-                                    console.error('Error loading queen image:', error)
-                                }
-                            }}
-                        >
-                            Cargar imagen
-                        </button>
-
-                        <button
+                        </CButton>
+                        <CButton 
                             type="submit"
                             disabled={!name.trim() || !selectedSeason}
                         >
                             Guardar
-                        </button>
-
+                        </CButton>
                     </div>
 
                 </form>

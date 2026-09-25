@@ -1,13 +1,15 @@
-import styles from './page.module.css'
+import styles from './SeasonSelector.module.css'
 import { FaCaretDown } from 'react-icons/fa'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export default function SeasonSelector({
+    children,
     seasons,
     selectedSeason,
     dropdownOpen,
     setDropdownOpen,
-    handleSeasonChange
+    handleSeasonChange,
+    dropLeft = false
 }) {
     const [seasonSearch, setSeasonSearch] = useState('')
 
@@ -16,7 +18,7 @@ export default function SeasonSelector({
     )
 
     return (
-        <div className={styles.selector}>
+        <div className={`${styles.selector} ${dropLeft ? styles.dropLeft : ''}`}>
 
             <button
                 type="button"
@@ -24,9 +26,7 @@ export default function SeasonSelector({
                 onClick={() => setDropdownOpen(prev => !prev)}
             >
                 <span>
-                    {selectedSeason
-                        ? selectedSeason.name
-                        : 'Selecciona una temporada'}
+                    {children}
                 </span>
 
                 <FaCaretDown
@@ -44,7 +44,9 @@ export default function SeasonSelector({
                             type="text"
                             placeholder="Buscar temporada..."
                             value={seasonSearch}
-                            onChange={(e) => setSeasonSearch(e.target.value)}
+                            onChange={(e) =>
+                                setSeasonSearch(e.target.value)
+                            }
                             className={styles.searchInput}
                         />
                     </div>

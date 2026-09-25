@@ -8,24 +8,24 @@
 
 .profilesList {
     width: 100%;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-text);
     border-radius: 10px;
     overflow: hidden;
-    background: white;
+    background: var(--color-admin-profile-background);
 }
 
 .header,
 .profile {
     display: grid;
-    grid-template-columns: 120px 1.2fr 2fr 150px 180px;
+    grid-template-columns: 120px 1.2fr 2fr 150px 180px auto;
     align-items: center;
     gap: 1rem;
     padding: 0.9rem 1.2rem;
 }
 
 .header {
-    background: #f5f5f5;
-    border-bottom: 1px solid #ddd;
+    background: var(--color-admin-profile-header);
+    border-bottom: 1px solid var(--color-text);
 }
 
 .header > div {
@@ -37,7 +37,7 @@
 .header span {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #666;
+    color: var(--color-text);
 }
 
 .header input,
@@ -45,12 +45,12 @@
     width: 100%;
     min-width: 0;
     padding: 0.45rem 0.6rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-text);
     border-radius: 6px;
-    background: white;
+    background-color: var(--color-surface);
     font: inherit;
     font-size: 0.85rem;
-    color: #333;
+    color: var(--color-text);
     outline: none;
 }
 
@@ -61,9 +61,9 @@
 
 .profile {
     min-height: 55px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-text);
     font-size: 0.95rem;
-    color: #333;
+    color: var(--color-text);
     transition: background-color 0.15s ease;
 }
 
@@ -72,14 +72,14 @@
 }
 
 .profile:hover {
-    background-color: #fafafa;
+    background-color: var(--color-admin-profile-hover);
 }
 
 .role {
     width: fit-content;
     padding: 0.3rem 0.65rem;
     border-radius: 999px;
-    background: #eee;
+    background: var(--color-surface);
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: capitalize;
@@ -132,37 +132,8 @@
     align-items: center;
 }
 
-.actions button {
-    padding: 0.4rem 0.7rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background: white;
-    cursor: pointer;
-    font-size: 0.85rem;
-}
-
-.editButton:hover {
-    background: #f0f0f0;
-}
-
 .deleteButton {
     color: #c62828;
-}
-
-.deleteButton:hover {
-    background: #fff0f0;
-}
-
-.saveButton {
-    color: #2e7d32;
-}
-
-.saveButton:hover {
-    background: #f0fff0;
-}
-
-.cancelButton:hover {
-    background: #f0f0f0;
 }
 
 .profile input,
@@ -170,9 +141,9 @@
     width: 100%;
     min-width: 0;
     padding: 0.45rem 0.6rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-text);
     border-radius: 6px;
-    background: white;
+    background: var(--color-surface);
     font: inherit;
     outline: none;
 }

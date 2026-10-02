@@ -7,8 +7,7 @@ import { supabase } from '@/lib/supabase/client'
 import styles from './page.module.css'
 
 export default function LoginPage() {
-    console.log('ORIGIN:', window.location.origin)
-            console.log('REDIRECT:', `${window.location.origin}/auth/callback`)
+
     const router = useRouter()
 
     const [email, setEmail] = useState('')

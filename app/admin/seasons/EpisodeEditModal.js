@@ -18,7 +18,7 @@ export default function EpisodeEditModal({
 
     const handleSubmit = (e) => {
         e.preventDefault()
-
+        
         onSave({
             ...episode,
             title: title.trim(),

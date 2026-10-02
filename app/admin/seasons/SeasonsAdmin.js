@@ -29,7 +29,7 @@ export default function SeasonsAdmin() {
     }
 
     const fetchEpisodes = async (season) => {
-        const episodesList = await episodeService.getEpisodes(season.id)
+        const episodesList = await episodeService.getEpisodesAdmin(season.id)
         setEpisodes(episodesList)
     }
 
@@ -173,7 +173,6 @@ export default function SeasonsAdmin() {
                     onClose={() => setEditingEpisode(null)}
 
                     onSave={ async (updatedEpisode) => {
-                        console.log(updatedEpisode)
                         await episodeService.updateEpisode(updatedEpisode);
                         updateEpisodes();
                         setEditingEpisode(null)

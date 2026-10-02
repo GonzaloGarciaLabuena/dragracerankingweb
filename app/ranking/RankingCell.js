@@ -4,7 +4,6 @@ import { useState, useRef } from 'react'
 import styles from './RankingCell.module.css'
 
 export default function RankingCell({ 
-    esFinal,
     cellId, 
     activeCell, 
     setActiveCell, 
@@ -14,7 +13,6 @@ export default function RankingCell({
 }) {
     const [openUp, setOpenUp] = useState(false)
     const cellRef = useRef(null)
-    const [finalPointTypes, setFinalPointTypes] = useState(pointTypes)
     const open = activeCell === cellId 
     const [openLeft, setOpenLeft] = useState(false)
 
@@ -42,15 +40,6 @@ export default function RankingCell({
 
                 setOpenLeft(spaceRight < dropdownWidth)
             }
-
-            if (!esFinal) {
-                setFinalPointTypes(
-                    pointTypes.filter(pointType => pointType.id !== 'point9')
-                )
-            } else {
-                setFinalPointTypes(pointTypes)
-            }
-
             setActiveCell(cellId)
         }
     }
@@ -92,7 +81,7 @@ export default function RankingCell({
                         EMPTY
                     </button>
 
-                    {finalPointTypes.map(pointType => (
+                    {pointTypes.map(pointType => (
                         <button
                             key={pointType.id}
                             className={styles.option}

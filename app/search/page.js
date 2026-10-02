@@ -42,8 +42,11 @@ export default function Search() {
     }
 
     const fetchPointTypes = async () => {
-        const types = await pointTypeService.getPointTypes()
-        setPointTypes(types)
+        const typesNormal = await pointTypeService.getPointTypes('default');
+        const typesFinal = await pointTypeService.getPointTypes('final');
+        const typesFinalDraga = await pointTypeService.getPointTypes('finalDraga');
+        const allPointTypes = [...typesNormal, ...typesFinal, ...typesFinalDraga];
+        setPointTypes(allPointTypes);
     }
 
     const fetchQueens = async (season) => {

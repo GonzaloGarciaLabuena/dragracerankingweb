@@ -7,7 +7,9 @@ export default function RankingTable({
     season,
     queens,
     episodes,
-    pointTypes,
+    pointTypesNormal,
+    pointTypesFinal,
+    pointTypesFinalDraga,
     pointsMap,
     setPointsMap,
     activeCell,
@@ -28,7 +30,7 @@ export default function RankingTable({
 
             if (currentQueenId === queenId) {
                 const episode = episodes.find(episode => episode.id === currentEpisodeId)
-                if (episode?.esFinal) continue
+                if (episode?.esFinal || episode?.esFinalDraga) continue
                 if (point.id === 'point7') continue //Es un punto "N/A", no debe ser contabilizado
                 totalScore += point.value 
                 totalEpisodes++
@@ -103,7 +105,9 @@ export default function RankingTable({
                             key={queen.id}
                             queen={queen}
                             episodes={episodes}
-                            pointTypes={pointTypes}
+                            pointTypesNormal={pointTypesNormal}
+                            pointTypesFinal={pointTypesFinal}
+                            pointTypesFinalDraga={pointTypesFinalDraga}
                             pointsMap={pointsMap}
                             setPointsMap={setPointsMap}
                             activeCell={activeCell}

@@ -49,16 +49,8 @@ export async function PATCH(request) {
     
     const updates = {}
 
-    if (body.editData.role !== undefined) {
-        updates.role = body.editData.role
-    }
-
     if (body.editData.username !== undefined) {
         updates.username = body.editData.username
-    }
-
-    if (body.editData.full_name !== undefined) {
-        updates.full_name = body.editData.full_name
     }
 
     if (body.editData.avatar_url !== undefined) {

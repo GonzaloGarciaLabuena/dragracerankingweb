@@ -21,7 +21,6 @@ export default function SeasonsAdmin() {
     const [newEpisode, setNewEpisode] = useState(null)
     const [newSeason, setNewSeason] = useState(null)
     const [editSeason, setEditSeason] = useState(null)
-    const [seasonSearch, setSeasonSearch] = useState('')
 
     const fetchSeasons = async () => {
         const seasonsList = await seasonService.getAllSeasons()
@@ -46,10 +45,6 @@ export default function SeasonsAdmin() {
         fetchEpisodes(season)
         setDropdownOpen(false)
     }
-
-    const filteredSeasons = seasons.filter(season =>
-        season.name.toLowerCase().includes(seasonSearch.toLowerCase())
-    )
 
     return (
         <div className={styles.container}>

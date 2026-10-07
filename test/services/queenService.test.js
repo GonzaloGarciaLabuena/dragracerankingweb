@@ -90,6 +90,24 @@ describe("queenService", () => {
         "Selected Season ID is required to list the queens",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error fetching queens");
+
+      queenApiClient.get.mockRejectedValue(apiError);
+
+      const SeasonSelected = {
+        id: "season1",
+        name: "Drag Season 1",
+        franchise: "Franchise 1",
+        year: "2026",
+      };
+      const page = null;
+
+      await expect(
+        queenService.listQueens(SeasonSelected, page),
+      ).rejects.toThrow("Error fetching queens");
+    });
   });
 
   describe("createQueen", () => {
@@ -156,6 +174,20 @@ describe("queenService", () => {
         "Image is required",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error creating queen");
+
+      queenApiClient.create.mockRejectedValue(apiError);
+
+      const name = "name";
+      const seasonId = "season1";
+      const image_Url = "image1";
+
+      await expect(
+        queenService.createQueen(name, seasonId, image_Url),
+      ).rejects.toThrow("Error creating queen");
+    });
   });
 
   describe("deleteQueen", () => {
@@ -182,6 +214,21 @@ describe("queenService", () => {
       expect(error.message).toBe("Invalid data");
 
       expect(error.cause).toEqual(["Queen ID is required to delete queen"]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error deleting queen");
+
+      queenApiClient.remove.mockRejectedValue(apiError);
+
+      const queen = {
+        id: "queen1",
+        name: "name1",
+      };
+
+      await expect(
+        queenService.deleteQueen(queen.id),
+      ).rejects.toThrow("Error deleting queen");
     });
   });
 
@@ -213,6 +260,21 @@ describe("queenService", () => {
       expect(error.cause).toEqual([
         "Queen Name is required to check if the queen exists",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error findin queen");
+
+      queenApiClient.existsQueen.mockRejectedValue(apiError);
+
+      const queen = {
+        id: "queen1",
+        name: "name1",
+      };
+
+      await expect(
+        queenService.existsQueen(queen.name),
+      ).rejects.toThrow("Error findin queen");
     });
   });
 });

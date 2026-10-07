@@ -53,6 +53,20 @@ describe("participateService", () => {
         "Image Url is required to add a participation",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error creating participate");
+
+      participateApiClient.create.mockRejectedValue(apiError);
+
+      const queenId = "queen1";
+      const seasonId = "season1";
+      const image_url = "image_url1";
+
+      await expect(
+        participateService.addParticipation(queenId, seasonId, image_url),
+      ).rejects.toThrow("Error creating participate");
+    });
   });
 
   describe("deleteParticipation", () => {
@@ -98,6 +112,19 @@ describe("participateService", () => {
         "Queen ID is required to delete a participation",
         "Season ID is required to delete a participation",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error deleting participate");
+
+      participateApiClient.delete.mockRejectedValue(apiError);
+
+      const queenId = "queen1";
+      const seasonId = "season1";
+
+      await expect(
+        participateService.deleteParticipation(queenId, seasonId),
+      ).rejects.toThrow("Error deleting participate");
     });
   });
 });

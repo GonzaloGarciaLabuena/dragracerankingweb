@@ -29,6 +29,7 @@ export default function RankingPage() {
   const [profile, setProfile] = useState(null);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState("score");
 
   const fetchSeasons = async () => {
     const map = await seasonService.getRankableSeasons();
@@ -41,11 +42,11 @@ export default function RankingPage() {
   };
 
   const fetchPointTypes = async () => {
-    const typesNormal = await pointTypeService.getPointTypes('default');
+    const typesNormal = await pointTypeService.getPointTypes("default");
     setPointTypesNormal(typesNormal);
-    const typesFinal = await pointTypeService.getPointTypes('final');
+    const typesFinal = await pointTypeService.getPointTypes("final");
     setPointTypesFinal(typesFinal);
-    const typesFinalDraga = await pointTypeService.getPointTypes('finalDraga');
+    const typesFinalDraga = await pointTypeService.getPointTypes("finalDraga");
     setPointTypesFinalDraga(typesFinalDraga);
     const allPointTypes = [...typesNormal, ...typesFinal, ...typesFinalDraga];
     setPointTypesAll(allPointTypes);
@@ -202,6 +203,12 @@ export default function RankingPage() {
         >
           Descargar ranking
         </button>
+
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="score">Puntuación</option>
+          <option value="episodes">Nº de episodios</option>
+          <option value="lastEpisode">Último episodio</option>
+        </select>
       </div>
 
       {selectedSeason && (
@@ -218,6 +225,7 @@ export default function RankingPage() {
           activeCell={activeCell}
           setActiveCell={setActiveCell}
           tableRef={tableRef}
+          sortBy={sortBy}
         />
       )}
     </div>

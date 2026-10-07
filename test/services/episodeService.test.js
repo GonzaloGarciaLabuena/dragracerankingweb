@@ -88,6 +88,23 @@ describe("episodeService", () => {
         "An episode cannot be both final and final Draga",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error creating episode");
+
+      episodeApiClient.create.mockRejectedValue(apiError);
+
+      const seasonId = "season1";
+      const newEpisode = {
+        title: "episodeTitle",
+        esFinal: false,
+        esFinalDraga: false,
+      };
+
+      await expect(
+        episodeService.createEpisode(seasonId, newEpisode),
+      ).rejects.toThrow("Error creating episode");
+    });
   });
 
   describe("getEpisodes", () => {
@@ -127,6 +144,18 @@ describe("episodeService", () => {
       expect(error.cause).toEqual([
         "Season ID is required to fetch the episodes",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error getting episode");
+
+      episodeApiClient.get.mockRejectedValue(apiError);
+
+      const seasonId = "season1";
+
+      await expect(
+        episodeService.getEpisodes(seasonId),
+      ).rejects.toThrow("Error getting episode");
     });
   });
 
@@ -169,6 +198,18 @@ describe("episodeService", () => {
         "Season ID is required to fetch the episodes",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error getting episode");
+
+      episodeApiClient.getAdmin.mockRejectedValue(apiError);
+
+      const seasonId = "season1";
+
+      await expect(
+        episodeService.getEpisodesAdmin(seasonId),
+      ).rejects.toThrow("Error getting episode");
+    });
   });
 
   describe("deleteLastEpisode", () => {
@@ -199,6 +240,18 @@ describe("episodeService", () => {
       expect(error.cause).toEqual([
         "Season ID is required to delete the episode",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error deleting episode");
+
+      episodeApiClient.deleteLast.mockRejectedValue(apiError);
+
+      const seasonId = "season1";
+
+      await expect(
+        episodeService.deleteLastEpisode(seasonId),
+      ).rejects.toThrow("Error deleting episode");
     });
   });
 
@@ -279,6 +332,23 @@ describe("episodeService", () => {
       expect(error.cause).toEqual([
         "An episode cannot be both final and final Draga",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error updating episode");
+
+      episodeApiClient.update.mockRejectedValue(apiError);
+
+      const episodeNew = {
+        id: "episode1",
+        title: "titleNew",
+        esFinal: true,
+        esFinalDraga: false,
+      };
+
+      await expect(
+        episodeService.updateEpisode(episodeNew),
+      ).rejects.toThrow("Error updating episode");
     });
   });
 });

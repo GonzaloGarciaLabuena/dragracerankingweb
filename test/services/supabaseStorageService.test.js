@@ -39,6 +39,18 @@ describe("supabaseStorageService", () => {
 
       expect(error.cause).toEqual(["Path is required to get the queen image"]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error fetching queen img");
+
+      const path = "bbdd/image/path";
+
+      supabaseStorageAPIClient.getImg.mockRejectedValue(apiError);
+
+      await expect(supabaseStorageService.getQueenImg(path)).rejects.toThrow(
+        "Error fetching queen img",
+      );
+    });
   });
 
   describe("getAllImg", () => {
@@ -81,6 +93,16 @@ describe("supabaseStorageService", () => {
         "Page must be a positive integer",
         "Page size must be a positive integer",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error fetching queen img");
+
+      supabaseStorageAPIClient.getAllImg.mockRejectedValue(apiError);
+
+      await expect(supabaseStorageService.getAllImg()).rejects.toThrow(
+        "Error fetching queen img",
+      );
     });
   });
 });

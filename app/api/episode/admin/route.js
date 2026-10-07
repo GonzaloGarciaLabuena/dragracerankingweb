@@ -9,7 +9,7 @@ export async function GET(request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const seasonId = searchParams.get("season");
+  const seasonId = searchParams.get("seasonId");
 
   const { data, error: dbError } = await supabase
     .from("episode")
@@ -58,7 +58,7 @@ export async function DELETE(request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const seasonId = searchParams.get("season");
+  const seasonId = searchParams.get("seasonId");
 
   const { data, error: dbError } = await supabase.rpc("delete_last_episode", {
     p_season_id: seasonId,

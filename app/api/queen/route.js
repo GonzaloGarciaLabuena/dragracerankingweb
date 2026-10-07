@@ -37,7 +37,7 @@ export async function GET(request) {
      .order('queen(name)', { ascending: true })
      .range(from, to)
 
-  if (seasonId) {
+  if (seasonId !== "all") {
     query = query.eq("season_id", seasonId)
   }
 

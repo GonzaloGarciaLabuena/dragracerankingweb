@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./page.module.css";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { seasonService } from "@/lib/services/seasonService";
 import { episodeService } from "@/lib/services/episodeService";
@@ -17,7 +17,6 @@ export default function RankingPage() {
   const tableRef = useRef(null);
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [episodes, setEpisodes] = useState([]);
   const [pointTypesNormal, setPointTypesNormal] = useState([]);
   const [pointTypesFinal, setPointTypesFinal] = useState([]);
@@ -31,7 +30,9 @@ export default function RankingPage() {
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("score");
-  const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const optionsRef = useRef(null);
 
   const fetchSeasons = async () => {
     const map = await seasonService.getRankableSeasons();
@@ -73,7 +74,6 @@ export default function RankingPage() {
     setLoading(true);
 
     setSelectedSeason(season);
-    setDropdownOpen(false);
 
     try {
       await Promise.all([
@@ -129,6 +129,10 @@ export default function RankingPage() {
     }
   };
 
+  const handleDropdown = (dropdown) => {
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -144,6 +148,18 @@ export default function RankingPage() {
     };
 
     loadData();
+
+    const handleClick = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
   }, []);
 
   useEffect(() => {
@@ -179,12 +195,13 @@ export default function RankingPage() {
           <button onClick={() => setError(null)}>Cerrar</button>
         </div>
       )}
-      <div className={styles.options}>
+      <div ref={optionsRef} className={styles.options}>
         <SeasonSelector
           seasons={seasons}
           selectedSeason={selectedSeason}
-          dropdownOpen={dropdownOpen}
-          setDropdownOpen={setDropdownOpen}
+          dropdownOpen={openDropdown === "season"}
+          setDropdownOpen={() => handleDropdown("season")}
+          setOpenDropdown={setOpenDropdown}
           handleSeasonChange={handleSeasonChange}
         >
           Seleccionar temporada
@@ -192,8 +209,9 @@ export default function RankingPage() {
 
         <RankingModeSelector
           selectedMode={sortBy}
-          dropdownOpen={modeDropdownOpen}
-          setDropdownOpen={setModeDropdownOpen}
+          dropdownOpen={openDropdown === "mode"}
+          setDropdownOpen={() => handleDropdown("mode")}
+          setOpenDropdown={setOpenDropdown}
           handleModeChange={setSortBy}
         />
 

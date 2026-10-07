@@ -1,14 +1,14 @@
 "use client";
 
 import styles from "./page.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { seasonService } from "@/lib/services/seasonService";
 import { pointTypeService } from "@/lib/services/pointTypeService";
 import { queenService } from "@/lib/services/queenService";
 import { ppeService } from "@/lib/services/ppeService";
 import { episodeService } from "@/lib/services/episodeService";
 import { profileService } from "@/lib/services/profileService";
-import UserSelector from "./UserSelector";
+import UserSelector from "@/components/UserSelector/UserSelector";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
 import RankingModeSelector from "@/components/RankingModeSelector/RankingModeSelector";
 import RankingTable from "../ranking/RankingTable";
@@ -18,15 +18,15 @@ export default function Search() {
   const [seasons, setSeasons] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [dropdownOpenUser, setDropdownOpenUser] = useState(false);
-  const [dropdownOpenSeason, setDropdownOpenSeason] = useState(false);
   const [episodes, setEpisodes] = useState([]);
   const [pointTypes, setPointTypes] = useState([]);
   const [pointsMap, setPointsMap] = useState(new Map());
   const [queens, setQueens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("score");
-  const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+ 
+  const optionsRef = useRef(null);
 
   const fetchUsers = async () => {
     const users = await profileService.getAllOtherProfiles();
@@ -64,7 +64,6 @@ export default function Search() {
   const handleUserChange = async (user) => {
     setLoading(true);
     setSelectedUser(user);
-    setDropdownOpenUser(false);
 
     setSelectedSeason(null);
     setSeasons([]);
@@ -85,7 +84,6 @@ export default function Search() {
     setLoading(true);
 
     setSelectedSeason(season);
-    setDropdownOpenSeason(false);
 
     try {
       await Promise.all([
@@ -98,6 +96,10 @@ export default function Search() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDropdown = (dropdown) => {
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
 
   useEffect(() => {
@@ -114,6 +116,18 @@ export default function Search() {
     };
 
     loadData();
+
+    const handleClick = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
   }, []);
 
   useEffect(() => {
@@ -153,12 +167,13 @@ export default function Search() {
         </div>
       )}
 
-      <div className={styles.options}>
+      <div ref={optionsRef} className={styles.options}>
         <UserSelector
           users={users}
           selectedUser={selectedUser}
-          dropdownOpen={dropdownOpenUser}
-          setDropdownOpen={setDropdownOpenUser}
+          dropdownOpen={openDropdown === "user"}
+          setDropdownOpen={() => handleDropdown("user")}
+          setOpenDropdown={setOpenDropdown}
           handleUserChange={handleUserChange}
         />
 
@@ -166,8 +181,9 @@ export default function Search() {
           <SeasonSelector
             seasons={seasons}
             selectedSeason={selectedSeason}
-            dropdownOpen={dropdownOpenSeason}
-            setDropdownOpen={setDropdownOpenSeason}
+            dropdownOpen={openDropdown === "season"}
+            setDropdownOpen={() => handleDropdown("season")}
+            setOpenDropdown={setOpenDropdown}
             handleSeasonChange={handleSeasonChange}
           >
             Seleccionar temporada
@@ -177,8 +193,9 @@ export default function Search() {
         {selectedUser && (
           <RankingModeSelector
             selectedMode={sortBy}
-            dropdownOpen={modeDropdownOpen}
-            setDropdownOpen={setModeDropdownOpen}
+            dropdownOpen={openDropdown === "mode"}
+            setDropdownOpen={() => handleDropdown("mode")}
+            setOpenDropdown={setOpenDropdown}
             handleModeChange={setSortBy}
           />
         )}

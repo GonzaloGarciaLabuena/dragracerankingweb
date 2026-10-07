@@ -2,7 +2,7 @@
 
 import { queenService } from "@/lib/services/queenService";
 import { seasonService } from "@/lib/services/seasonService";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./queens.module.css";
 import QueenNewModal from "./QueenNewModal";
 import { participateService } from "@/lib/services/participateService";
@@ -18,14 +18,16 @@ export default function QueensAdmin() {
   const [loading, setLoading] = useState(false);
   const [newQueen, setNewQueen] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [seasons, setSeasons] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const optionsRef = useRef(null);
 
   const fetchAllQueens = async (currentPage) => {
     try {
       setLoading(true);
 
-      const queensList = await queenService.listQueens(null, currentPage);
+      const queensList = await queenService.listQueens({id: "all"}, currentPage);
 
       setQueens(queensList.data);
       setTotalPages(queensList.totalPages);
@@ -60,9 +62,26 @@ export default function QueensAdmin() {
     }
   };
 
+  const handleDropdown = (dropdown) => {
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
+  };
+
   useEffect(() => {
     fetchAllQueens(page);
     fetchSeasons();
+
+    const handleClick = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+
   }, [page]);
 
   const handleDownload = async (name, season) => {
@@ -83,17 +102,17 @@ export default function QueensAdmin() {
   const handleSeasonChange = (season) => {
     setSelectedSeason(season);
     fetchQueensOnlySeason(season);
-    setDropdownOpen(false);
   };
 
   return (
     <div>
-      <div className={styles.queensHeader}>
+      <div ref={optionsRef} className={styles.queensHeader}>
         <SeasonSelector
           seasons={seasons}
           selectedSeason={selectedSeason}
-          dropdownOpen={dropdownOpen}
-          setDropdownOpen={setDropdownOpen}
+          dropdownOpen={openDropdown === "user"}
+          setDropdownOpen={() => handleDropdown("user")}
+          setOpenDropdown={setOpenDropdown}
           handleSeasonChange={handleSeasonChange}
         >
           Seleccionar una temporada

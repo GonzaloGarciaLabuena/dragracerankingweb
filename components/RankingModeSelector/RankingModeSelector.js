@@ -6,6 +6,7 @@ export default function RankingModeSelector({
   selectedMode,
   dropdownOpen,
   setDropdownOpen,
+  setOpenDropdown,
   handleModeChange,
   dropLeft = false,
 }) {
@@ -24,7 +25,7 @@ export default function RankingModeSelector({
       <button
         type="button"
         className={styles.selectorButton}
-        onClick={() => setDropdownOpen((prev) => !prev)}
+        onClick={setDropdownOpen}
       >
         <span>{selectedModeLabel}</span>
 
@@ -45,6 +46,7 @@ export default function RankingModeSelector({
               onClick={() => {
                 handleModeChange(mode.value);
                 setDropdownOpen(false);
+                setOpenDropdown(null)
               }}
             >
               <span>{mode.label}</span>

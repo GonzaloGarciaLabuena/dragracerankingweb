@@ -10,6 +10,7 @@ import { queenService } from "@/lib/services/queenService";
 import { ppeService } from "@/lib/services/ppeService";
 import { profileService } from "@/lib/services/profileService";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
+import RankingModeSelector from "@/components/RankingModeSelector/RankingModeSelector";
 import RankingTable from "./RankingTable";
 
 export default function RankingPage() {
@@ -30,6 +31,7 @@ export default function RankingPage() {
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("score");
+  const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
 
   const fetchSeasons = async () => {
     const map = await seasonService.getRankableSeasons();
@@ -188,6 +190,13 @@ export default function RankingPage() {
           Seleccionar temporada
         </SeasonSelector>
 
+        <RankingModeSelector
+          selectedMode={sortBy}
+          dropdownOpen={modeDropdownOpen}
+          setDropdownOpen={setModeDropdownOpen}
+          handleModeChange={setSortBy}
+        />
+
         <button
           type="button"
           className={styles.optionButton}
@@ -203,12 +212,6 @@ export default function RankingPage() {
         >
           Descargar ranking
         </button>
-
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="score">Puntuación</option>
-          <option value="episodes">Nº de episodios</option>
-          <option value="lastEpisode">Último episodio</option>
-        </select>
       </div>
 
       {selectedSeason && (

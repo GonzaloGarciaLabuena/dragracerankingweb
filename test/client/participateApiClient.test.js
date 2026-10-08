@@ -129,9 +129,9 @@ describe("participateApiClient", () => {
         }),
       });
 
-      await expect(
-        participateApiClient.getAll(),
-      ).rejects.toThrow("Error fetching seasons");
+      await expect(participateApiClient.getAll()).rejects.toThrow(
+        "Error fetching seasons",
+      );
     });
 
     it("throws the default error if the API does not provide an error", async () => {
@@ -140,9 +140,9 @@ describe("participateApiClient", () => {
         json: vi.fn().mockResolvedValue({}),
       });
 
-      await expect(
-        participateApiClient.getAll(),
-      ).rejects.toThrow("Error fetching seasons");
+      await expect(participateApiClient.getAll()).rejects.toThrow(
+        "Error fetching seasons",
+      );
     });
   });
 
@@ -228,6 +228,99 @@ describe("participateApiClient", () => {
         participateApiClient.delete({
           queenId: "queen1",
           seasonId: "season1",
+        }),
+      ).rejects.toThrow("Error deleting participate");
+    });
+  });
+
+  describe("update", () => {
+    it("calls the API correctly and returns the data", async () => {
+      const input = {
+        queenId: "queen1",
+        seasonId: "season1",
+        imgPath: "image/path.jpg",
+      };
+
+      const data = { exists: true };
+
+      fetch.mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue(data),
+      });
+
+      const result = await participateApiClient.update({
+        queenId: input.queenId,
+        seasonId: input.seasonId,
+        imgPath: input.imgPath,
+      });
+
+      expect(fetch).toHaveBeenCalledWith("/api/participate", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(input),
+      });
+
+      expect(result).toEqual(data);
+    });
+
+    it("throws validation errors when the data is invalid", async () => {
+      await expect(
+        participateApiClient.update({
+          queenId: null,
+          seasonId: null,
+          imgPath: null,
+        }),
+      ).rejects.toMatchObject({
+        message: "Invalid data",
+        cause: [
+          "Queen ID is required to update participate",
+          "Season ID is required to update participate",
+          "Image Path is required to update participate",
+        ],
+      });
+
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("throws an error when data is not an object", async () => {
+      await expect(participateApiClient.update(null)).rejects.toMatchObject({
+        message: "Invalid data",
+        cause: ["Data object is required to delete participate"],
+      });
+
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("throws the API error", async () => {
+      fetch.mockResolvedValue({
+        ok: false,
+        json: vi.fn().mockResolvedValue({
+          error: "Error updating participate",
+        }),
+      });
+
+      await expect(
+        participateApiClient.update({
+          queenId: "queen1",
+          seasonId: "season1",
+          imgPath: "image/path.jpg",
+        }),
+      ).rejects.toThrow("Error updating participate");
+    });
+
+    it("throws the default error if the API does not provide an error", async () => {
+      fetch.mockResolvedValue({
+        ok: false,
+        json: vi.fn().mockResolvedValue({}),
+      });
+
+      await expect(
+        participateApiClient.update({
+          queenId: "queen1",
+          seasonId: "season1",
+          imgPath: "image/path.jpg",
         }),
       ).rejects.toThrow("Error deleting participate");
     });

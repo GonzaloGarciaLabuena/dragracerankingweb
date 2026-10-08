@@ -119,9 +119,7 @@ describe("queenApiClient", () => {
     it("throws validation errors when the data is invalid", async () => {
       await expect(queenApiClient.get(123, null)).rejects.toMatchObject({
         message: "Invalid data",
-        cause: [
-          "Season object is required to fetch queen",
-        ],
+        cause: ["Season object is required to fetch queen"],
       });
 
       expect(fetch).not.toHaveBeenCalled();
@@ -358,6 +356,95 @@ describe("queenApiClient", () => {
       await expect(queenApiClient.existsQueen("user1")).rejects.toThrow(
         "Error findin queen",
       );
+    });
+  });
+
+  describe("updateName", () => {
+    it("calls the API correctly and returns the data", async () => {
+      const queenId = "queen1";
+      const queenName = "New Queen Name";
+
+      const data = { exists: true };
+
+      fetch.mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue(data),
+      });
+
+      const result = await queenApiClient.updateName(queenId, queenName);
+
+      expect(fetch).toHaveBeenCalledWith("api/queen/", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          queenId: queenId,
+          queenName: queenName,
+        }),
+      });
+
+      expect(result).toEqual(data);
+    });
+
+    it("throws validation errors when the data is invalid", async () => {
+      await expect(queenApiClient.updateName(null, null)).rejects.toMatchObject(
+        {
+          message: "Invalid data",
+          cause: [
+            "Queen Id is required to update queen",
+            "Queen Id is required to update queen",
+          ],
+        },
+      );
+
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("throws an error when queenId is invalid", async () => {
+      await expect(
+        queenApiClient.updateName(null, "Queen Name"),
+      ).rejects.toMatchObject({
+        message: "Invalid data",
+        cause: ["Queen Id is required to update queen"],
+      });
+
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("throws an error when queenName is invalid", async () => {
+      await expect(
+        queenApiClient.updateName("queen1", null),
+      ).rejects.toMatchObject({
+        message: "Invalid data",
+        cause: ["Queen Id is required to update queen"],
+      });
+
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("throws the API error", async () => {
+      fetch.mockResolvedValue({
+        ok: false,
+        json: vi.fn().mockResolvedValue({
+          error: "Error updating queen",
+        }),
+      });
+
+      await expect(
+        queenApiClient.updateName("queen1", "New Queen Name"),
+      ).rejects.toThrow("Error updating queen");
+    });
+
+    it("throws the default error if the API does not provide an error", async () => {
+      fetch.mockResolvedValue({
+        ok: false,
+        json: vi.fn().mockResolvedValue({}),
+      });
+
+      await expect(
+        queenApiClient.updateName("queen1", "New Queen Name"),
+      ).rejects.toThrow("Error updating queen");
     });
   });
 });

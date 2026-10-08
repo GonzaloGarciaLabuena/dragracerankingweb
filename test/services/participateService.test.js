@@ -8,6 +8,7 @@ vi.mock("../../lib/client/participate/participateApiClient", () => ({
     create: vi.fn(),
     getAll: vi.fn(),
     delete: vi.fn(),
+    update: vi.fn(),
   },
 }));
 
@@ -125,6 +126,64 @@ describe("participateService", () => {
       await expect(
         participateService.deleteParticipation(queenId, seasonId),
       ).rejects.toThrow("Error deleting participate");
+    });
+  });
+
+  describe("updateParticipationImg", () => {
+    it("updates participation image", async () => {
+      const queenId = "queen1";
+      const seasonId = "season1";
+      const imgPath = "imgPath";
+
+      const data = { queenId: queenId, seasonId: seasonId, imgPath: imgPath };
+
+      participateApiClient.update.mockResolvedValue({
+        success: true,
+        data,
+      });
+
+      const result = await participateService.updateParticipationImg(
+        queenId,
+        seasonId,
+        imgPath,
+      );
+
+      expect(participateApiClient.update).toHaveBeenCalledWith({
+        queenId: "queen1",
+        seasonId: "season1",
+        imgPath: "imgPath",
+      });
+
+      expect(result.success).toEqual(true);
+      expect(result.data).toEqual(data);
+    });
+
+    it("devuelve todos los errores cuando la entrada es inválida", async () => {
+      const error = await participateService
+        .updateParticipationImg(null, null, null)
+        .catch((error) => error);
+
+      expect(error.message).toBe("Invalid data");
+
+      expect(error.cause).toEqual([
+        "Queen ID is required to delete a participation",
+        "Season ID is required to delete a participation",
+        "Image path is required to update a participation",
+      ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error updating participation");
+
+      participateApiClient.update.mockRejectedValue(apiError);
+
+      await expect(
+        participateService.updateParticipationImg(
+          "queen1",
+          "season1",
+          "imgPath",
+        ),
+      ).rejects.toThrow("Error updating participation");
     });
   });
 });

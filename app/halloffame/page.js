@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./page.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ppeService } from "@/lib/services/ppeService";
 import UserSelector from "@/components/UserSelector/UserSelector";
@@ -13,6 +13,8 @@ export default function HallofFame() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
+
+  const optionsRef = useRef(null);
 
   const fetchHallofFame = async (user = null) => {
     const hallOfFame = await ppeService.getHallOfFame(user);

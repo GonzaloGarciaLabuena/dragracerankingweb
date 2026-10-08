@@ -8,12 +8,18 @@ import { wikiImgService } from "@/lib/services/wikiImgService";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
 import CButton from "@/components/CButton/CButton";
 
-export default function QueenNewModal({ season, onClose, onSave }) {
-  const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
-  const [selectedSeason, setSelectedSeason] = useState(season);
+export default function QueenNewModal({
+  children,
+  season,
+  queen = {},
+  onClose,
+  onSave,
+}) {
+  const [name, setName] = useState(queen.name || "");
+  const [url, setUrl] = useState(queen.image_url || "");
+  const [imagePreview, setImagePreview] = useState(queen.image_url || null);
+  const [selectedSeason, setSelectedSeason] = useState(queen.season || season);
   const [seasons, setSeasons] = useState([]);
-  const [imagePreview, setImagePreview] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const optionsRef = useRef(null);
@@ -21,7 +27,7 @@ export default function QueenNewModal({ season, onClose, onSave }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    onSave({ name: name, url: url, season: selectedSeason });
+    onSave({ name: name, image_url: url, season: selectedSeason });
   };
 
   const handleSeasonChange = (seasonChange) => {
@@ -60,7 +66,7 @@ export default function QueenNewModal({ season, onClose, onSave }) {
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>Añadir nueva reina</h3>
+        <h3>{children}</h3>
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
@@ -70,6 +76,7 @@ export default function QueenNewModal({ season, onClose, onSave }) {
               <input
                 id="queenName"
                 type="text"
+                value={name}
                 onChange={(e) => setName(e.target.value)}
                 className={styles.formInput}
                 autoFocus
@@ -102,6 +109,7 @@ export default function QueenNewModal({ season, onClose, onSave }) {
               <input
                 id="urlImg"
                 type="text"
+                value={url}
                 onChange={(e) => {
                   setUrl(e.target.value);
                   setImagePreview(e.target.value);

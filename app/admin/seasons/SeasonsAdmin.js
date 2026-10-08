@@ -167,7 +167,9 @@ export default function SeasonsAdmin() {
             updateEpisodes();
             setNewEpisode(null);
           }}
-        />
+        >
+          Añadir nuevo episodio
+        </EpisodeModal>
       )}
 
       {editingEpisode && (
@@ -179,7 +181,9 @@ export default function SeasonsAdmin() {
             updateEpisodes();
             setEditingEpisode(null);
           }}
-        />
+        >
+          Editar episodio
+        </EpisodeModal>
       )}
 
       {newSeason && (
@@ -194,7 +198,9 @@ export default function SeasonsAdmin() {
             setNewSeason(null);
             fetchSeasons(newSeason);
           }}
-        />
+        >
+          Añadir nueva temporada
+        </SeasonMondal>
       )}
 
       {editSeason && (
@@ -213,7 +219,9 @@ export default function SeasonsAdmin() {
               fetchSeasons(response.data);
             }
           }}
-        />
+        >
+          Editar temporada
+        </SeasonMondal>
       )}
     </div>
   );

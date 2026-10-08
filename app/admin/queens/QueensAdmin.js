@@ -17,9 +17,11 @@ export default function QueensAdmin() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [newQueen, setNewQueen] = useState(null);
+  const [editQueen, setEditQueen] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [seasons, setSeasons] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedQueen, setSelectedQueen] = useState(null);
 
   const optionsRef = useRef(null);
 
@@ -27,7 +29,10 @@ export default function QueensAdmin() {
     try {
       setLoading(true);
 
-      const queensList = await queenService.listQueens({id: "all"}, currentPage);
+      const queensList = await queenService.listQueens(
+        { id: "all" },
+        currentPage,
+      );
 
       setQueens(queensList.data);
       setTotalPages(queensList.totalPages);
@@ -81,23 +86,7 @@ export default function QueensAdmin() {
     return () => {
       document.removeEventListener("click", handleClick);
     };
-
   }, [page]);
-
-  const handleDownload = async (name, season) => {
-    const urlQueenName = name.replace(/\s+/g, "");
-    const imgBlob = await wikiImgService.getQueenImgWiki(urlQueenName, season);
-    console.log(imgBlob);
-    const imgPath = await supabaseStorageService.uploadImgQueen(
-      season,
-      urlQueenName,
-      imgBlob,
-    );
-    console.log(imgPath);
-    const imgUrl = await supabaseStorageService.getQueenImg(imgPath);
-    console.log(imgUrl);
-    return imgUrl;
-  };
 
   const handleSeasonChange = (season) => {
     setSelectedSeason(season);
@@ -145,6 +134,10 @@ export default function QueensAdmin() {
               key={queen.id + "-" + queen.season.name}
               type="button"
               className={styles.queen}
+              onClick={() => {
+                setSelectedQueen(queen);
+                setEditQueen(true);
+              }}
             >
               <img src={queen.image_url} alt={queen.name} />
 
@@ -178,12 +171,35 @@ export default function QueensAdmin() {
           </CButton>
         </div>
       )}
+      {editQueen && (
+        <QueenNewModal
+          season={selectedSeason}
+          queen={selectedQueen}
+          onClose={() => setEditQueen(false)}
+          onSave={async ({ name, image_url, season }) => {
+            await queenService.updateQueen(selectedQueen, selectedSeason, {
+              name,
+              image_url,
+              season,
+            });
+            if (selectedSeason) {
+              fetchQueensOnlySeason(selectedSeason);
+            } else {
+              fetchAllQueens(page);
+            }
+            setEditQueen(false);
+          }}
+        >
+          Editar reina
+        </QueenNewModal>
+      )}
+
       {newQueen && (
         <QueenNewModal
           season={selectedSeason}
           onClose={() => setNewQueen(false)}
           onSave={async ({ name, url, season }) => {
-            if (await queenService.createQueen(name, season.id, url)) {
+            if (await queenService.createQueen(name, season, url)) {
               alert(`Reina ${name} creada correctamente`);
               if (selectedSeason) {
                 fetchQueensOnlySeason(selectedSeason);
@@ -195,7 +211,9 @@ export default function QueensAdmin() {
               alert(`Error creando la Reina ${name}`);
             }
           }}
-        />
+        >
+          Añadir nueva reina
+        </QueenNewModal>
       )}
     </div>
   );

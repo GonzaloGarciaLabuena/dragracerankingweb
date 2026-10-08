@@ -69,6 +69,20 @@ describe("seasonService", () => {
         "Year is required to create the season",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error creating season");
+
+      seasonApiClient.create.mockRejectedValue(apiError);
+
+      const name = "nameSeason1";
+      const franchise = "FR1";
+      const year = 2026;
+
+      await expect(
+        seasonService.createSeason(name, franchise, year),
+      ).rejects.toThrow("Error creating season");
+    });
   });
 
   describe("getRankableSeasons", () => {
@@ -76,6 +90,16 @@ describe("seasonService", () => {
       seasonApiClient.getRankableSeasons.mockResolvedValue();
       const result = await seasonService.getRankableSeasons();
       expect(seasonApiClient.getRankableSeasons).toHaveBeenCalledWith();
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error fetching seasons");
+
+      seasonApiClient.getRankableSeasons.mockRejectedValue(apiError);
+
+      await expect(seasonService.getRankableSeasons()).rejects.toThrow(
+        "Error fetching seasons",
+      );
     });
   });
 
@@ -162,6 +186,22 @@ describe("seasonService", () => {
         "Year is required to update the season",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error updating episode");
+
+      const id = "season1";
+
+      const newName = "newSeason1";
+      const newFranchise = "NEWFR1";
+      const newYear = 2027;
+
+      seasonApiClient.update.mockRejectedValue(apiError);
+
+      await expect(
+        seasonService.updateSeason(id, newName, newFranchise, newYear),
+      ).rejects.toThrow("Error updating episode");
+    });
   });
 
   describe("getAllSeasons", () => {
@@ -175,6 +215,16 @@ describe("seasonService", () => {
       const result = await seasonService.getAllSeasons();
       expect(seasonApiClient.getAllSeasons).toHaveBeenCalledWith();
       expect(result).toEqual(seasons);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error fetching seasons");
+
+      seasonApiClient.getAllSeasons.mockRejectedValue(apiError);
+
+      await expect(
+        seasonService.getAllSeasons(),
+      ).rejects.toThrow("Error fetching seasons");
     });
   });
 
@@ -259,6 +309,18 @@ describe("seasonService", () => {
       expect(error.message).toBe("Invalid data");
 
       expect(error.cause).toEqual(["ID for the user is required"]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error fetching seasons");
+
+      const user = { id: "user1", username: "username1" };
+
+      seasonApiClient.getUserRankedSeasons.mockRejectedValue(apiError);
+
+      await expect(
+        seasonService.getUserRankedSeasons(user),
+      ).rejects.toThrow("Error fetching seasons");
     });
   });
 });

@@ -1,92 +1,124 @@
-import { NextResponse } from 'next/server'
-import { getAuthenticatedUser } from '@/lib/supabase/auth'
+import { NextResponse } from "next/server";
+import {
+  getAuthenticatedUser,
+  getAuthenticatedAdmin,
+} from "@/lib/supabase/auth";
 
 export async function POST(request) {
-    const { supabase, user, error: authError } = await getAuthenticatedUser()
+  const { supabase, user, error: authError } = await getAuthenticatedUser();
 
-    if (!user) {
-        return Response.json(
-            { error: authError.message },
-            { status: 401 }
-        )
-    }
+  if (!user) {
+    return Response.json({ error: authError.message }, { status: 401 });
+  }
 
-    const body = await request.json()
+  const body = await request.json();
 
-    const { data, error: dbError } = await supabase
-        .from('participate')
-        .insert({
-            queen_id: body.queenId,
-            season_id: body.seasonId,
-            image_url: body.image_url
-        })
-        .select() // Devuelve el dato insertado
-
-    if (dbError) {
-        return NextResponse.json(
-            { error: dbError.message },
-            { status: 500 }
-        )
-    }
-
-    return NextResponse.json({
-        exists: !!data
+  const { data, error: dbError } = await supabase
+    .from("participate")
+    .insert({
+      queen_id: body.queenId,
+      season_id: body.seasonId,
+      image_url: body.image_url,
     })
+    .select(); // Devuelve el dato insertado
+
+  if (dbError) {
+    return NextResponse.json({ error: dbError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    exists: !!data,
+  });
 }
 
 export async function GET() {
-    const { supabase, user, error: authError } = await getAuthenticatedUser()
+  const { supabase, user, error: authError } = await getAuthenticatedUser();
 
-    if (!user) {
-        return Response.json(
-            { error: authError.message },
-            { status: 401 }
-        )
-    }
+  if (!user) {
+    return Response.json({ error: authError.message }, { status: 401 });
+  }
 
-    const { data, error: dbError } = await supabase
-        .from('participate')
-        .select('*')
-    
-    if (dbError) {
-        return NextResponse.json(
-            { error: dbError.message },
-            { status: 500 }
-        )
-    }
+  const { data, error: dbError } = await supabase
+    .from("participate")
+    .select("*");
 
-    return NextResponse.json(data)
+  if (dbError) {
+    return NextResponse.json({ error: dbError.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
 }
 
 //Comprueba si Queen tiene mas de 1 participacion. Si tiene mas de 1 la elimina y devuelve TRUE.
 //Si solo tiene 1 participacion devuelve false y no elimina ninguna participación, le tocara eliminarse
 //con la funcion de QueenAPI
 export async function DELETE(request) {
-    const { supabase, user, error: authError } = await getAuthenticatedUser()
+  const { supabase, user, error: authError } = await getAuthenticatedUser();
 
-    if (!user) {
-        return Response.json(
-            { error: authError.message },
-            { status: 401 }
-        )
-    }
-    
-    const body = await request.json()
+  if (!user) {
+    return Response.json({ error: authError.message }, { status: 401 });
+  }
 
-    const { count } = await supabase
-        .from("participate")
-        .select("*", { count: "exact", head: true })
-        .eq("queen_id", body.queenId);
+  const body = await request.json();
 
-    if (count > 1) {
-        await supabase
-            .from("participate")
-            .delete()
-            .eq("queen_id", body.queenId)
-            .eq("season_id", body.seasonId);
+  const { count } = await supabase
+    .from("participate")
+    .select("*", { count: "exact", head: true })
+    .eq("queen_id", body.queenId);
 
-        return NextResponse.json(true)
-    }
+  if (count > 1) {
+    await supabase
+      .from("participate")
+      .delete()
+      .eq("queen_id", body.queenId)
+      .eq("season_id", body.seasonId);
 
-    return NextResponse.json(false)
+    return NextResponse.json(true);
+  }
+
+  return NextResponse.json(false);
+}
+
+export async function PATCH(request) {
+  const { supabase, response } = await getAuthenticatedAdmin();
+
+  if (response) {
+    return response;
+  }
+
+  const body = await request.json();
+  const { queenId, seasonId, imgPath } = body;
+
+  if (!queenId) {
+    return Response.json({ error: "Queen ID is required" }, { status: 400 });
+  }
+
+  if (!seasonId) {
+    return Response.json({ error: "Season ID is required" }, { status: 400 });
+  }
+
+  if (!imgPath) {
+    return Response.json({ error: "Image Path is required" }, { status: 400 });
+  }
+
+  const updates = {
+    image_url: imgPath,
+  };
+
+  const { data, error: dbError } = await supabase
+    .from("participate")
+    .update(updates)
+    .eq("season_id", seasonId)
+    .eq("queen_id", queenId)
+    .select()
+    .single();
+
+  if (dbError) {
+    return NextResponse.json({ error: dbError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    success: true,
+    data,
+  });
 }

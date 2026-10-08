@@ -134,39 +134,3 @@ export async function POST(request) {
         )
     }
 }
-
-export async function DELETE(request) {
-
-    const { supabase, user, error: authError } = await getAuthenticatedUser()
-
-    if (!user) {
-        return Response.json(
-            { error: authError.message },
-            { status: 401 }
-        )
-    }
-
-    const rowsToDelete = await request.json()
-    const rowsWithUser = rowsToDelete.map(row => ({
-        ...row,
-        client_id: user.id
-    }));
-
-    const { data, error: dbError } = await supabase.rpc(
-        "delete_points", 
-        {
-            p_rows: rowsWithUser
-        }
-    );
-
-    if (dbError) {
-        return NextResponse.json(
-        { error: dbError.message },
-        { status: 500 }
-        )
-    }
-
-    return NextResponse.json({
-        exists: !!data
-    })
-}

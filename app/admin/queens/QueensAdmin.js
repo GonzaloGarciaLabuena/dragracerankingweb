@@ -2,7 +2,7 @@
 
 import { queenService } from "@/lib/services/queenService";
 import { seasonService } from "@/lib/services/seasonService";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./queens.module.css";
 import QueenNewModal from "./QueenNewModal";
 import { participateService } from "@/lib/services/participateService";
@@ -17,15 +17,22 @@ export default function QueensAdmin() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [newQueen, setNewQueen] = useState(null);
+  const [editQueen, setEditQueen] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [seasons, setSeasons] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedQueen, setSelectedQueen] = useState(null);
+
+  const optionsRef = useRef(null);
 
   const fetchAllQueens = async (currentPage) => {
     try {
       setLoading(true);
 
-      const queensList = await queenService.listQueens(null, currentPage);
+      const queensList = await queenService.listQueens(
+        { id: "all" },
+        currentPage,
+      );
 
       setQueens(queensList.data);
       setTotalPages(queensList.totalPages);
@@ -60,40 +67,41 @@ export default function QueensAdmin() {
     }
   };
 
+  const handleDropdown = (dropdown) => {
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
+  };
+
   useEffect(() => {
     fetchAllQueens(page);
     fetchSeasons();
-  }, [page]);
 
-  const handleDownload = async (name, season) => {
-    const urlQueenName = name.replace(/\s+/g, "");
-    const imgBlob = await wikiImgService.getQueenImgWiki(urlQueenName, season);
-    console.log(imgBlob);
-    const imgPath = await supabaseStorageService.uploadImgQueen(
-      season,
-      urlQueenName,
-      imgBlob,
-    );
-    console.log(imgPath);
-    const imgUrl = await supabaseStorageService.getQueenImg(imgPath);
-    console.log(imgUrl);
-    return imgUrl;
-  };
+    const handleClick = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, [page]);
 
   const handleSeasonChange = (season) => {
     setSelectedSeason(season);
     fetchQueensOnlySeason(season);
-    setDropdownOpen(false);
   };
 
   return (
     <div>
-      <div className={styles.queensHeader}>
+      <div ref={optionsRef} className={styles.queensHeader}>
         <SeasonSelector
           seasons={seasons}
           selectedSeason={selectedSeason}
-          dropdownOpen={dropdownOpen}
-          setDropdownOpen={setDropdownOpen}
+          dropdownOpen={openDropdown === "user"}
+          setDropdownOpen={() => handleDropdown("user")}
+          setOpenDropdown={setOpenDropdown}
           handleSeasonChange={handleSeasonChange}
         >
           Seleccionar una temporada
@@ -126,6 +134,10 @@ export default function QueensAdmin() {
               key={queen.id + "-" + queen.season.name}
               type="button"
               className={styles.queen}
+              onClick={() => {
+                setSelectedQueen(queen);
+                setEditQueen(true);
+              }}
             >
               <img src={queen.image_url} alt={queen.name} />
 
@@ -159,12 +171,35 @@ export default function QueensAdmin() {
           </CButton>
         </div>
       )}
+      {editQueen && (
+        <QueenNewModal
+          season={selectedSeason}
+          queen={selectedQueen}
+          onClose={() => setEditQueen(false)}
+          onSave={async ({ name, image_url, season }) => {
+            await queenService.updateQueen(selectedQueen, selectedSeason, {
+              name,
+              image_url,
+              season,
+            });
+            if (selectedSeason) {
+              fetchQueensOnlySeason(selectedSeason);
+            } else {
+              fetchAllQueens(page);
+            }
+            setEditQueen(false);
+          }}
+        >
+          Editar reina
+        </QueenNewModal>
+      )}
+
       {newQueen && (
         <QueenNewModal
           season={selectedSeason}
           onClose={() => setNewQueen(false)}
           onSave={async ({ name, url, season }) => {
-            if (await queenService.createQueen(name, season.id, url)) {
+            if (await queenService.createQueen(name, season, url)) {
               alert(`Reina ${name} creada correctamente`);
               if (selectedSeason) {
                 fetchQueensOnlySeason(selectedSeason);
@@ -176,7 +211,9 @@ export default function QueensAdmin() {
               alert(`Error creando la Reina ${name}`);
             }
           }}
-        />
+        >
+          Añadir nueva reina
+        </QueenNewModal>
       )}
     </div>
   );

@@ -7,6 +7,7 @@ export default function SeasonSelector({
     selectedUser,
     dropdownOpen,
     setDropdownOpen,
+    setOpenDropdown,
     handleUserChange
 }) {
     const [userSearch, setUserSearch] = useState('')
@@ -21,7 +22,7 @@ export default function SeasonSelector({
             <button
                 type="button"
                 className={styles.selectorButton}
-                onClick={() => setDropdownOpen(prev => !prev)}
+                onClick={setDropdownOpen}
             >
                 <span>
                     {selectedUser
@@ -61,6 +62,7 @@ export default function SeasonSelector({
                             onClick={() => {
                                 handleUserChange(user)
                                 setUserSearch('')
+                                setOpenDropdown(null)
                             }}
                         >
                             <span>{user.username}</span>

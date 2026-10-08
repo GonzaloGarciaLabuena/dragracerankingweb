@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { queenService } from "../../lib/services/queenService";
 import { participateService } from "../../lib/services/participateService";
+import { supabaseStorageService } from "../../lib/services/supabaseStorageService";
 import { queenApiClient } from "../../lib/client/queen/queenApiClient";
 
 // Mock profileApiClient
@@ -10,10 +11,12 @@ vi.mock("../../lib/client/queen/queenApiClient", () => ({
     create: vi.fn(),
     remove: vi.fn(),
     existsQueen: vi.fn(),
+    updateName: vi.fn(),
   },
 }));
 
 vi.mock("../../lib/services/participateService");
+vi.mock("../../lib/services/supabaseStorageService");
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
@@ -90,13 +93,39 @@ describe("queenService", () => {
         "Selected Season ID is required to list the queens",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error fetching queens");
+
+      queenApiClient.get.mockRejectedValue(apiError);
+
+      const SeasonSelected = {
+        id: "season1",
+        name: "Drag Season 1",
+        franchise: "Franchise 1",
+        year: "2026",
+      };
+      const page = null;
+
+      await expect(
+        queenService.listQueens(SeasonSelected, page),
+      ).rejects.toThrow("Error fetching queens");
+    });
   });
 
   describe("createQueen", () => {
     it("call create when queen does not exist", async () => {
       const name = "name";
-      const seasonId = "season1";
+      const season = { id: "season1", franchise: "FR1" };
       const image_Url = "image1";
+
+      vi.spyOn(supabaseStorageService, "uploadImgQueen").mockResolvedValue(
+        "imgPath",
+      );
+
+      vi.spyOn(supabaseStorageService, "getQueenImg").mockResolvedValue(
+        "imgUrl",
+      );
 
       vi.spyOn(queenService, "existsQueen").mockResolvedValue(false);
 
@@ -104,14 +133,24 @@ describe("queenService", () => {
         exists: true,
       });
 
-      const result = await queenService.createQueen(name, seasonId, image_Url);
+      const result = await queenService.createQueen(name, season, image_Url);
+
+      expect(supabaseStorageService.uploadImgQueen).toHaveBeenCalledWith(
+        season,
+        "name",
+        image_Url,
+      );
+
+      expect(supabaseStorageService.getQueenImg).toHaveBeenCalledWith(
+        "imgPath",
+      );
 
       expect(queenService.existsQueen).toHaveBeenCalledWith(name);
 
       expect(queenApiClient.create).toHaveBeenCalledWith({
         name: "name",
         seasonId: "season1",
-        image_Url: "image1",
+        image_url: "imgUrl",
       });
 
       expect(result.exists).toBe(true);
@@ -119,8 +158,16 @@ describe("queenService", () => {
 
     it("adds participation when queen already exists", async () => {
       const name = "name";
-      const seasonId = "season1";
+      const season = { id: "season1", franchise: "FR1" };
       const image_Url = "image1";
+
+      vi.spyOn(supabaseStorageService, "uploadImgQueen").mockResolvedValue(
+        "imgPath",
+      );
+
+      vi.spyOn(supabaseStorageService, "getQueenImg").mockResolvedValue(
+        "imgUrl",
+      );
 
       vi.spyOn(queenService, "existsQueen").mockResolvedValue({
         id: "queen1",
@@ -130,14 +177,14 @@ describe("queenService", () => {
         exists: true,
       });
 
-      const result = await queenService.createQueen(name, seasonId, image_Url);
+      const result = await queenService.createQueen(name, season, image_Url);
 
       expect(queenService.existsQueen).toHaveBeenCalledWith(name);
 
       expect(participateService.addParticipation).toHaveBeenCalledWith(
         "queen1",
         "season1",
-        "image1",
+        "imgUrl",
       );
 
       expect(result.exists).toEqual(true);
@@ -152,9 +199,101 @@ describe("queenService", () => {
 
       expect(error.cause).toEqual([
         "Name is required",
-        "Season is required",
+        "Season is required to create queen",
         "Image is required",
       ]);
+    });
+
+    it("devuelve todos los errores cuando season es inválida", async () => {
+      const error = await queenService
+        .createQueen("name1", {}, "url1")
+        .catch((error) => error);
+
+      expect(error.message).toBe("Invalid data");
+
+      expect(error.cause).toEqual([
+        "Season Id is required to create queen",
+        "Season franchise is required to create queen",
+      ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error creating queen");
+
+      queenApiClient.create.mockRejectedValue(apiError);
+
+      const name = "name";
+      const season = {
+        id: "season1",
+        franchise: "FR1",
+      };
+      const image_Url = "image1";
+
+      vi.spyOn(supabaseStorageService, "uploadImgQueen").mockResolvedValue(
+        "imgPath",
+      );
+
+      vi.spyOn(supabaseStorageService, "getQueenImg").mockResolvedValue(
+        "imgUrl",
+      );
+
+      vi.spyOn(queenService, "existsQueen").mockResolvedValue(false);
+
+      await expect(
+        queenService.createQueen(name, season, image_Url),
+      ).rejects.toThrow("Error creating queen");
+    });
+
+    it("propaga el error al subir la imagen", async () => {
+      const uploadError = new Error("Error uploading image");
+
+      vi.spyOn(supabaseStorageService, "uploadImgQueen").mockRejectedValue(
+        uploadError,
+      );
+
+      const name = "name";
+      const season = {
+        id: "season1",
+        franchise: "FR1",
+      };
+      const image_Url = "image1";
+
+      await expect(
+        queenService.createQueen(name, season, image_Url),
+      ).rejects.toThrow("Error uploading image");
+    });
+
+    it("propaga el error aunque falle al borrar la imagen", async () => {
+      const imageError = new Error("Error getting image");
+      const deleteError = new Error("Error deleting image");
+
+      vi.spyOn(supabaseStorageService, "uploadImgQueen").mockResolvedValue(
+        "imgPath",
+      );
+
+      vi.spyOn(supabaseStorageService, "getQueenImg").mockRejectedValue(
+        imageError,
+      );
+
+      vi.spyOn(supabaseStorageService, "deleteImgQueen").mockRejectedValue(
+        deleteError,
+      );
+
+      const name = "name";
+      const season = {
+        id: "season1",
+        franchise: "FR1",
+      };
+      const image_Url = "image1";
+
+      await expect(
+        queenService.createQueen(name, season, image_Url),
+      ).rejects.toThrow("Error getting image");
+
+      expect(supabaseStorageService.deleteImgQueen).toHaveBeenCalledWith(
+        "name",
+        season,
+      );
     });
   });
 
@@ -182,6 +321,21 @@ describe("queenService", () => {
       expect(error.message).toBe("Invalid data");
 
       expect(error.cause).toEqual(["Queen ID is required to delete queen"]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error deleting queen");
+
+      queenApiClient.remove.mockRejectedValue(apiError);
+
+      const queen = {
+        id: "queen1",
+        name: "name1",
+      };
+
+      await expect(queenService.deleteQueen(queen.id)).rejects.toThrow(
+        "Error deleting queen",
+      );
     });
   });
 
@@ -213,6 +367,67 @@ describe("queenService", () => {
       expect(error.cause).toEqual([
         "Queen Name is required to check if the queen exists",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error findin queen");
+
+      queenApiClient.existsQueen.mockRejectedValue(apiError);
+
+      const queen = {
+        id: "queen1",
+        name: "name1",
+      };
+
+      await expect(queenService.existsQueen(queen.name)).rejects.toThrow(
+        "Error findin queen",
+      );
+    });
+  });
+
+  describe("updateQueen", () => {
+    it("updates queen name and image", async () => {
+      const queen = {
+        id: "queen1",
+        name: "Queen Name",
+      };
+
+      const season = {
+        id: "season1",
+        franchise: "FR1",
+      };
+
+      const editData = {
+        name: "New Name",
+        image_url: "newImage",
+      };
+
+      vi.spyOn(supabaseStorageService, "updateImgQueen").mockResolvedValue(
+        "imgPath",
+      );
+
+      vi.spyOn(supabaseStorageService, "getQueenImg").mockResolvedValue(
+        "imgUrl",
+      );
+
+      await queenService.updateQueen(queen, season, editData);
+
+      expect(queenApiClient.updateName).toHaveBeenCalledWith(
+        "queen1",
+        "New Name",
+      );
+
+      expect(supabaseStorageService.updateImgQueen).toHaveBeenCalledWith(
+        queen,
+        season,
+        "newImage",
+      );
+
+      expect(participateService.updateParticipationImg).toHaveBeenCalledWith(
+        "queen1",
+        "season1",
+        "imgUrl",
+      );
     });
   });
 });

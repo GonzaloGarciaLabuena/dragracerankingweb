@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./modal.module.css";
 import CButton from "@/components/CButton/CButton";
 
-export default function EpisodeModal({ episode, onClose, onSave }) {
+export default function EpisodeModal({ children, episode, onClose, onSave }) {
   const [title, setTitle] = useState(episode?.title ?? "");
   const [final, setFinal] = useState(episode?.esFinal ?? false);
   const [finalDraga, setFinalDraga] = useState(episode?.esFinalDraga ?? false);
@@ -23,7 +23,7 @@ export default function EpisodeModal({ episode, onClose, onSave }) {
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>Añadir nuevo episodio</h3>
+        <h3>{children}</h3>
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>

@@ -38,7 +38,8 @@ export async function GET(request) {
                         year
                     ),
                     episode_id!inner(
-                        esFinal
+                        esFinal,
+                        esFinalDraga
                     ),
                     queen_id!inner(
                         id,
@@ -82,6 +83,7 @@ const createCompleteSeasonMap = (data, imageMap) => {
         const queen = item.ppe_reference.queen_id
         const pointType = item.point_type_id
         const esFinal = item.ppe_reference.episode_id.esFinal
+        const esFinalDraga = item.ppe_reference.episode_id.esFinalDraga
 
         if (!seasons.has(season.id)) {
             seasons.set(season.id, new Map())
@@ -107,7 +109,7 @@ const createCompleteSeasonMap = (data, imageMap) => {
         
         const currentQueen = queens.get(queen.id)
 
-        if (esFinal) {
+        if (esFinal || esFinalDraga) {
             if (pointType.id === 'point9') {
                 currentQueen.winner = true
             }

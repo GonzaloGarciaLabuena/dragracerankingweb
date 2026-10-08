@@ -20,7 +20,6 @@ vi.mock("../../lib/client/ppe/ppeApiClient", () => ({
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-
 describe("ppeService", () => {
   beforeEach(() => {
     mockFetch.mockClear();
@@ -82,6 +81,21 @@ describe("ppeService", () => {
         "Points Map is required to save ranking",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error saving ranking");
+
+      ppeApiClient.saveRanking.mockRejectedValue(apiError);
+
+      const season = { id: "season1" };
+      const queens = [{ id: "queen1" }];
+      const episodes = [{ id: "episode1" }];
+      const pointsMap = new Map();
+
+      await expect(
+        ppeService.saveRanking(season, queens, episodes, pointsMap),
+      ).rejects.toThrow("Error saving ranking");
+    });
   });
 
   describe("getRanking", () => {
@@ -133,6 +147,18 @@ describe("ppeService", () => {
         "Season ID is required to get ranking",
         "Point Types Array is required to get ranking",
       ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error getting ranking");
+
+      ppeApiClient.getRanking.mockRejectedValue(apiError);
+
+      const season = { id: "season1" };
+      const pointTypes = [{ id: "point1" }];
+      await expect(
+        ppeService.getRanking(season, pointTypes),
+      ).rejects.toThrow("Error getting ranking");
     });
   });
 
@@ -196,6 +222,19 @@ describe("ppeService", () => {
         "Point Types Array is required to get the ranking of a user",
       ]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error getting ranking of user");
+
+      ppeApiClient.getRankingUser.mockRejectedValue(apiError);
+
+      const user = { id: "user1" };
+      const season = { id: "season1" };
+      const pointTypes = [{ id: "point1" }];
+      await expect(
+        ppeService.getRankingOfUser(user, season, pointTypes),
+      ).rejects.toThrow("Error getting ranking of user");
+    });
   });
 
   describe("publishRanking", () => {
@@ -226,8 +265,19 @@ describe("ppeService", () => {
 
       expect(error.cause).toEqual(["Season ID is required to publish ranking"]);
     });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error publishing ranking");
+
+      ppeApiClient.publishRanking.mockRejectedValue(apiError);
+
+      const season = { id: "season1" };
+      await expect(
+        ppeService.publishRanking(season),
+      ).rejects.toThrow("Error publishing ranking");
+    });
   });
-  
+
   describe("getSeasonWinner", () => {
     it("devuelve la queen con point9 como ganadora", async () => {
       const ranking = new Map([
@@ -357,6 +407,29 @@ describe("ppeService", () => {
       ppeApiClient.getHallOfFame.mockResolvedValue(user);
       const result = await ppeService.getHallOfFame(user);
       expect(ppeApiClient.getHallOfFame).toHaveBeenCalledWith(user);
+    });
+
+    it("devuelve todos los errores cuando la entrada es inválida", async () => {
+      const error = await ppeService
+        .getHallOfFame({id: 123})
+        .catch((error) => error);
+
+      expect(error.message).toBe("Invalid data");
+
+      expect(error.cause).toEqual([
+        "User ID is required to get the ranking of a user"
+      ]);
+    });
+
+    it("propaga el error del apiClient", async () => {
+      const apiError = new Error("Error obteniendo Hall of Fame");
+
+      ppeApiClient.getHallOfFame.mockRejectedValue(apiError);
+
+      const user = { id: "user1" };
+      await expect(
+        ppeService.getHallOfFame(user),
+      ).rejects.toThrow("Error obteniendo Hall of Fame");
     });
   });
 

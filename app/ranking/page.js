@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./page.module.css";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { seasonService } from "@/lib/services/seasonService";
 import { episodeService } from "@/lib/services/episodeService";
@@ -10,13 +10,13 @@ import { queenService } from "@/lib/services/queenService";
 import { ppeService } from "@/lib/services/ppeService";
 import { profileService } from "@/lib/services/profileService";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
+import RankingModeSelector from "@/components/RankingModeSelector/RankingModeSelector";
 import RankingTable from "./RankingTable";
 
 export default function RankingPage() {
   const tableRef = useRef(null);
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [episodes, setEpisodes] = useState([]);
   const [pointTypesNormal, setPointTypesNormal] = useState([]);
   const [pointTypesFinal, setPointTypesFinal] = useState([]);
@@ -29,6 +29,10 @@ export default function RankingPage() {
   const [profile, setProfile] = useState(null);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState("score");
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const optionsRef = useRef(null);
 
   const fetchSeasons = async () => {
     const map = await seasonService.getRankableSeasons();
@@ -41,11 +45,11 @@ export default function RankingPage() {
   };
 
   const fetchPointTypes = async () => {
-    const typesNormal = await pointTypeService.getPointTypes('default');
+    const typesNormal = await pointTypeService.getPointTypes("default");
     setPointTypesNormal(typesNormal);
-    const typesFinal = await pointTypeService.getPointTypes('final');
+    const typesFinal = await pointTypeService.getPointTypes("final");
     setPointTypesFinal(typesFinal);
-    const typesFinalDraga = await pointTypeService.getPointTypes('finalDraga');
+    const typesFinalDraga = await pointTypeService.getPointTypes("finalDraga");
     setPointTypesFinalDraga(typesFinalDraga);
     const allPointTypes = [...typesNormal, ...typesFinal, ...typesFinalDraga];
     setPointTypesAll(allPointTypes);
@@ -70,7 +74,6 @@ export default function RankingPage() {
     setLoading(true);
 
     setSelectedSeason(season);
-    setDropdownOpen(false);
 
     try {
       await Promise.all([
@@ -126,6 +129,10 @@ export default function RankingPage() {
     }
   };
 
+  const handleDropdown = (dropdown) => {
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -141,6 +148,18 @@ export default function RankingPage() {
     };
 
     loadData();
+
+    const handleClick = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
   }, []);
 
   useEffect(() => {
@@ -176,16 +195,25 @@ export default function RankingPage() {
           <button onClick={() => setError(null)}>Cerrar</button>
         </div>
       )}
-      <div className={styles.options}>
+      <div ref={optionsRef} className={styles.options}>
         <SeasonSelector
           seasons={seasons}
           selectedSeason={selectedSeason}
-          dropdownOpen={dropdownOpen}
-          setDropdownOpen={setDropdownOpen}
+          dropdownOpen={openDropdown === "season"}
+          setDropdownOpen={() => handleDropdown("season")}
+          setOpenDropdown={setOpenDropdown}
           handleSeasonChange={handleSeasonChange}
         >
           Seleccionar temporada
         </SeasonSelector>
+
+        <RankingModeSelector
+          selectedMode={sortBy}
+          dropdownOpen={openDropdown === "mode"}
+          setDropdownOpen={() => handleDropdown("mode")}
+          setOpenDropdown={setOpenDropdown}
+          handleModeChange={setSortBy}
+        />
 
         <button
           type="button"
@@ -218,6 +246,7 @@ export default function RankingPage() {
           activeCell={activeCell}
           setActiveCell={setActiveCell}
           tableRef={tableRef}
+          sortBy={sortBy}
         />
       )}
     </div>

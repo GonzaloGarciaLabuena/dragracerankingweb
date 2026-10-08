@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./modal.module.css";
 import CButton from "@/components/CButton/CButton";
 
-export default function SeasonModal({ season = {}, onClose, onSave }) {
+export default function SeasonModal({ children, season = {}, onClose, onSave }) {
   const [name, setName] = useState(season.name || "");
   const [franchise, setFranchise] = useState(season.franchise || "");
   const [year, setYear] = useState(season.year || "");
@@ -22,7 +22,7 @@ export default function SeasonModal({ season = {}, onClose, onSave }) {
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>Añadir nuevo temporada</h3>
+        <h3>{children}</h3>
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>

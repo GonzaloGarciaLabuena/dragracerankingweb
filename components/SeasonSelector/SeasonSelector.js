@@ -34,6 +34,7 @@ export default function SeasonSelector({
 
       {dropdownOpen && (
         <div className={styles.dropdown}>
+          {/* Buscador fijo */}
           <div className={styles.searchContainer}>
             <input
               type="text"
@@ -44,26 +45,31 @@ export default function SeasonSelector({
             />
           </div>
 
-          {filteredSeasons.map((season) => (
-            <button
-              key={season.id}
-              type="button"
-              className={`${styles.dropdownItem} ${
-                selectedSeason?.id === season.id ? styles.selected : ""
-              }`}
-              onClick={() => {
-                handleSeasonChange(season);
-                setSeasonSearch("");
-                setOpenDropdown(null)
-              }}
-            >
-              <span>{season.name}</span>
-            </button>
-          ))}
+          {/* Lista con scroll independiente */}
+          <div className={styles.dropdownList}>
+            {filteredSeasons.map((season) => (
+              <button
+                key={season.id}
+                type="button"
+                className={`${styles.dropdownItem} ${
+                  selectedSeason?.id === season.id ? styles.selected : ""
+                }`}
+                onClick={() => {
+                  handleSeasonChange(season);
+                  setSeasonSearch("");
+                  setOpenDropdown(null);
+                }}
+              >
+                <span>{season.name}</span>
+              </button>
+            ))}
 
-          {filteredSeasons.length === 0 && (
-            <div className={styles.noResults}>No se encontraron temporadas</div>
-          )}
+            {filteredSeasons.length === 0 && (
+              <div className={styles.noResults}>
+                No se encontraron temporadas
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

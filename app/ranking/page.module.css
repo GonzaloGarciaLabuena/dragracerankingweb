@@ -1,73 +1,87 @@
 .pageContent {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    min-height: calc(100vh - 80px);
-    box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
 }
 
 .loadingOverlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1000;
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
 
-    color: white;
-    font-size: 1.2rem;
-    gap: 15px;
+  color: white;
+  font-size: 1.2rem;
+  gap: 15px;
 }
 
 .loadingSpinner {
-    width: 45px;
-    height: 45px;
+  width: 45px;
+  height: 45px;
 
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
 
-    animation: spin 0.8s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .options {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.desktopOptions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mobileOptions {
+  display: flex;
 }
 
 .optionButton {
-    padding: 13px;
+  padding: 13px;
 
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
 
-    background-color: var(--color-surface);
-    color: var(--color-text);
+  background-color: var(--color-surface);
+  color: var(--color-text);
 
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
 }
 
 .optionButton:hover {
-    background-color: var(--color-hover);
-    border-color: var(--color-text-secondary);
+  background-color: var(--color-hover);
+  border-color: var(--color-text-secondary);
 }
 
 @media (max-width: 768px) {
-
+  .options {
+    flex-direction: row;
+    align-items: center;
+  }
 }

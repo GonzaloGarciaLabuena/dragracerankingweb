@@ -12,9 +12,13 @@ import { profileService } from "@/lib/services/profileService";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
 import RankingModeSelector from "@/components/RankingModeSelector/RankingModeSelector";
 import RankingTable from "./RankingTable";
+import MobileOptionsSelector from "@/components/MobileOptionsSelector/MobileOptionsSelector";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function RankingPage() {
   const tableRef = useRef(null);
+  const optionsRef = useRef(null);
+
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [episodes, setEpisodes] = useState([]);
@@ -32,7 +36,7 @@ export default function RankingPage() {
   const [sortBy, setSortBy] = useState("score");
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  const optionsRef = useRef(null);
+  const isMobile = useIsMobile();
 
   const fetchSeasons = async () => {
     const map = await seasonService.getRankableSeasons();
@@ -47,11 +51,15 @@ export default function RankingPage() {
   const fetchPointTypes = async () => {
     const typesNormal = await pointTypeService.getPointTypes("default");
     setPointTypesNormal(typesNormal);
+
     const typesFinal = await pointTypeService.getPointTypes("final");
     setPointTypesFinal(typesFinal);
+
     const typesFinalDraga = await pointTypeService.getPointTypes("finalDraga");
     setPointTypesFinalDraga(typesFinalDraga);
+
     const allPointTypes = [...typesNormal, ...typesFinal, ...typesFinalDraga];
+
     setPointTypesAll(allPointTypes);
   };
 
@@ -72,7 +80,6 @@ export default function RankingPage() {
 
   const handleSeasonChange = async (season) => {
     setLoading(true);
-
     setSelectedSeason(season);
 
     try {
@@ -83,6 +90,7 @@ export default function RankingPage() {
       ]);
     } catch (error) {
       console.error("Error loading queens:", error);
+      setError("No se ha podido cargar el ranking de la temporada.");
     } finally {
       setLoading(false);
     }
@@ -91,15 +99,20 @@ export default function RankingPage() {
   const saveRanking = async () => {
     try {
       await ppeService.saveRanking(selectedSeason, queens, episodes, pointsMap);
+
       alert("Ranking guardado correctamente");
     } catch (error) {
-      alert(`${error.message}\n\n${error.cause.join("\n")}`);
+      const details = Array.isArray(error.cause) ? error.cause.join("\n") : "";
+
+      alert(details ? `${error.message}\n\n${details}` : error.message);
     }
   };
 
   const downloadRanking = async () => {
     if (!tableRef.current) return;
+
     const table = tableRef.current;
+
     try {
       const backgroundColor = getComputedStyle(document.documentElement)
         .getPropertyValue("--color-table-background")
@@ -109,7 +122,6 @@ export default function RankingPage() {
         pixelRatio: 2,
         backgroundColor,
         cacheBust: true,
-
         style: {
           boxShadow: "none",
         },
@@ -139,9 +151,11 @@ export default function RankingPage() {
 
       try {
         await Promise.all([getProfile(), fetchSeasons(), fetchPointTypes()]);
+
         setInitialDataLoaded(true);
       } catch (error) {
         console.error("Error loading ranking:", error);
+        setError("No se han podido cargar los datos del ranking.");
       } finally {
         setLoading(false);
       }
@@ -150,7 +164,7 @@ export default function RankingPage() {
     loadData();
 
     const handleClick = (event) => {
-      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+      if (!optionsRef.current?.contains(event.target)) {
         setOpenDropdown(null);
       }
     };
@@ -188,6 +202,7 @@ export default function RankingPage() {
           <span>Cargando...</span>
         </div>
       )}
+
       {error && (
         <div className="error-modal">
           <h2>Error</h2>
@@ -195,6 +210,7 @@ export default function RankingPage() {
           <button onClick={() => setError(null)}>Cerrar</button>
         </div>
       )}
+
       <div ref={optionsRef} className={styles.options}>
         <SeasonSelector
           seasons={seasons}
@@ -204,32 +220,49 @@ export default function RankingPage() {
           setOpenDropdown={setOpenDropdown}
           handleSeasonChange={handleSeasonChange}
         >
-          Seleccionar temporada
+          Temporada
         </SeasonSelector>
 
-        <RankingModeSelector
-          selectedMode={sortBy}
-          dropdownOpen={openDropdown === "mode"}
-          setDropdownOpen={() => handleDropdown("mode")}
-          setOpenDropdown={setOpenDropdown}
-          handleModeChange={setSortBy}
-        />
+        {isMobile === null ? null : isMobile ? (
+          <div className={styles.mobileOptions}>
+            <MobileOptionsSelector
+              selectedMode={sortBy}
+              handleModeChange={setSortBy}
+              saveRanking={saveRanking}
+              downloadRanking={downloadRanking}
+              dropdownOpen={openDropdown === "mobileOptions"}
+              setDropdownOpen={() => handleDropdown("mobileOptions")}
+            ></MobileOptionsSelector>
+          </div>
+        ) : (
+          <div className={styles.desktopOptions}>
+            <RankingModeSelector
+              selectedMode={sortBy}
+              dropdownOpen={openDropdown === "mode"}
+              setDropdownOpen={() => handleDropdown("mode")}
+              setOpenDropdown={setOpenDropdown}
+              handleModeChange={setSortBy}
+            >
+              Ordenar por
+            </RankingModeSelector>
 
-        <button
-          type="button"
-          className={styles.optionButton}
-          onClick={saveRanking}
-        >
-          Guardar ranking
-        </button>
+            <button
+              type="button"
+              className={styles.optionButton}
+              onClick={saveRanking}
+            >
+              Guardar ranking
+            </button>
 
-        <button
-          type="button"
-          className={styles.optionButton}
-          onClick={downloadRanking}
-        >
-          Descargar ranking
-        </button>
+            <button
+              type="button"
+              className={styles.optionButton}
+              onClick={downloadRanking}
+            >
+              Descargar ranking
+            </button>
+          </div>
+        )}
       </div>
 
       {selectedSeason && (

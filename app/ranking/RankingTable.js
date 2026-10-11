@@ -225,6 +225,7 @@ export default function RankingTable({
     <div className={styles.tableContainer}>
       <div
         ref={zoomContentRef}
+        data-zoom={isMobile ? zoom : 1}
         className={styles.zoomContent}
         style={{ zoom: isMobile ? zoom : 1 }}
         onTouchStart={isMobile ? handleTouchStart : undefined}

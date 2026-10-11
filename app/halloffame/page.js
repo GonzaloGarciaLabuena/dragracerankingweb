@@ -76,15 +76,18 @@ export default function HallofFame() {
       <h1 className={styles.title}>Hall of Fame</h1>
 
       <div ref={optionsRef} className={styles.options}>
-        <UserSelector
-          users={users}
-          selectedUser={selectedUser}
-          dropdownOpen={openDropdown === "user"}
-          setDropdownOpen={() => handleDropdown("user")}
-          setOpenDropdown={setOpenDropdown}
-          handleUserChange={handleUserChange}
-        />
-
+        <div className={styles.userOptions}>
+          <UserSelector
+            users={users}
+            selectedUser={selectedUser}
+            dropdownOpen={openDropdown === "user"}
+            setDropdownOpen={() => handleDropdown("user")}
+            setOpenDropdown={setOpenDropdown}
+            handleUserChange={handleUserChange}
+          >
+            Usuario
+          </UserSelector>
+        </div>
         <button
           type="button"
           className={styles.buttonHall}
@@ -92,7 +95,7 @@ export default function HallofFame() {
             handleUserChange(null);
           }}
         >
-          Tu Hall of Fame
+          Reset
         </button>
       </div>
 

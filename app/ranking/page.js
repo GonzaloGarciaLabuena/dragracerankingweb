@@ -50,17 +50,17 @@ export default function RankingPage() {
 
   const fetchPointTypes = async () => {
     const typesNormal = await pointTypeService.getPointTypes("default");
-    setPointTypesNormal(typesNormal);
-
     const typesFinal = await pointTypeService.getPointTypes("final");
-    setPointTypesFinal(typesFinal);
-
     const typesFinalDraga = await pointTypeService.getPointTypes("finalDraga");
-    setPointTypesFinalDraga(typesFinalDraga);
 
     const allPointTypes = [...typesNormal, ...typesFinal, ...typesFinalDraga];
 
+    setPointTypesNormal(typesNormal);
+    setPointTypesFinal(typesFinal);
+    setPointTypesFinalDraga(typesFinalDraga);
     setPointTypesAll(allPointTypes);
+
+    return allPointTypes;
   };
 
   const fetchQueens = async (season) => {
@@ -68,8 +68,8 @@ export default function RankingPage() {
     setQueens(data.data);
   };
 
-  const fetchPPE = async (season) => {
-    const map = await ppeService.getRanking(season, pointTypesAll);
+  const fetchPPE = async (season, pointTypes = pointTypesAll) => {
+    const map = await ppeService.getRanking(season, pointTypes);
     setPointsMap(map);
   };
 
@@ -192,7 +192,7 @@ export default function RankingPage() {
     if (season) {
       handleSeasonChange(season);
     }
-  }, [initialDataLoaded]);
+  }, [initialDataLoaded, seasons]);
 
   return (
     <div className={styles.pageContent}>
@@ -212,17 +212,18 @@ export default function RankingPage() {
       )}
 
       <div ref={optionsRef} className={styles.options}>
-        <SeasonSelector
-          seasons={seasons}
-          selectedSeason={selectedSeason}
-          dropdownOpen={openDropdown === "season"}
-          setDropdownOpen={() => handleDropdown("season")}
-          setOpenDropdown={setOpenDropdown}
-          handleSeasonChange={handleSeasonChange}
-        >
-          Temporada
-        </SeasonSelector>
-
+        <div className={styles.seasonOptions}>
+          <SeasonSelector
+            seasons={seasons}
+            selectedSeason={selectedSeason}
+            dropdownOpen={openDropdown === "season"}
+            setDropdownOpen={() => handleDropdown("season")}
+            setOpenDropdown={setOpenDropdown}
+            handleSeasonChange={handleSeasonChange}
+          >
+            Temporada
+          </SeasonSelector>
+        </div>
         {isMobile === null ? null : isMobile ? (
           <div className={styles.mobileOptions}>
             <MobileOptionsSelector
@@ -251,7 +252,7 @@ export default function RankingPage() {
               className={styles.optionButton}
               onClick={saveRanking}
             >
-              Guardar ranking
+              Guardar
             </button>
 
             <button
@@ -259,7 +260,7 @@ export default function RankingPage() {
               className={styles.optionButton}
               onClick={downloadRanking}
             >
-              Descargar ranking
+              Descargar
             </button>
           </div>
         )}

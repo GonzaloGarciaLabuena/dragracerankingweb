@@ -18,10 +18,6 @@ export default function MobileOptionsSelector({
     { value: "lastEpisode", label: "Último episodio" },
   ];
 
-  const selectedModeLabel = modes.find(
-    (mode) => mode.value === selectedMode,
-  )?.label;
-
   return (
     <div className={styles.selector}>
       <button
@@ -56,31 +52,35 @@ export default function MobileOptionsSelector({
             </button>
           ))}
 
-          <div className={styles.divider} />
+          {saveRanking && <div className={styles.divider} />}
 
-          <button
-            type="button"
-            className={styles.dropdownItem}
-            onClick={() => {
-              setDropdownOpen(false);
-              saveRanking();
-            }}
-          >
-            Guardar ranking
-          </button>
+          {saveRanking && (
+            <button
+              type="button"
+              className={styles.dropdownItem}
+              onClick={() => {
+                setDropdownOpen(false);
+                saveRanking();
+              }}
+            >
+              Guardar
+            </button>
+          )}
 
-          <div className={styles.divider} />
+          {downloadRanking && <div className={styles.divider} />}
 
-          <button
-            type="button"
-            className={styles.dropdownItem}
-            onClick={() => {
-              setDropdownOpen(false);
-              downloadRanking();
-            }}
-          >
-            Descargar ranking
-          </button>
+          {downloadRanking && (
+            <button
+              type="button"
+              className={styles.dropdownItem}
+              onClick={() => {
+                setDropdownOpen(false);
+                downloadRanking();
+              }}
+            >
+              Descargar
+            </button>
+          )}
         </div>
       )}
     </div>

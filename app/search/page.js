@@ -12,8 +12,12 @@ import UserSelector from "@/components/UserSelector/UserSelector";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
 import RankingModeSelector from "@/components/RankingModeSelector/RankingModeSelector";
 import RankingTable from "../ranking/RankingTable";
+import MobileOptionsSelector from "@/components/MobileOptionsSelector/MobileOptionsSelector";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Search() {
+  const optionsRef = useRef(null);
+
   const [users, setUsers] = useState([]);
   const [seasons, setSeasons] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -25,8 +29,8 @@ export default function Search() {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("score");
   const [openDropdown, setOpenDropdown] = useState(null);
- 
-  const optionsRef = useRef(null);
+
+  const isMobile = useIsMobile();
 
   const fetchUsers = async () => {
     const users = await profileService.getAllOtherProfiles();
@@ -168,37 +172,62 @@ export default function Search() {
       )}
 
       <div ref={optionsRef} className={styles.options}>
-        <UserSelector
-          users={users}
-          selectedUser={selectedUser}
-          dropdownOpen={openDropdown === "user"}
-          setDropdownOpen={() => handleDropdown("user")}
-          setOpenDropdown={setOpenDropdown}
-          handleUserChange={handleUserChange}
-        />
-
-        {selectedUser && (
-          <SeasonSelector
-            seasons={seasons}
-            selectedSeason={selectedSeason}
-            dropdownOpen={openDropdown === "season"}
-            setDropdownOpen={() => handleDropdown("season")}
-            setOpenDropdown={setOpenDropdown}
-            handleSeasonChange={handleSeasonChange}
-          >
-            Seleccionar temporada
-          </SeasonSelector>
-        )}
-
-        {selectedUser && (
-          <RankingModeSelector
-            selectedMode={sortBy}
-            dropdownOpen={openDropdown === "mode"}
-            setDropdownOpen={() => handleDropdown("mode")}
-            setOpenDropdown={setOpenDropdown}
-            handleModeChange={setSortBy}
-          />
-        )}
+        <div className={styles.optionsLeft}>
+          <div className={styles.userOptions}>
+            <UserSelector
+              users={users}
+              selectedUser={selectedUser}
+              dropdownOpen={openDropdown === "user"}
+              setDropdownOpen={() => handleDropdown("user")}
+              setOpenDropdown={setOpenDropdown}
+              handleUserChange={handleUserChange}
+            >
+              Seleccionar usuario
+            </UserSelector>
+          </div>
+          <div className={styles.seasonSlot}>
+            {selectedUser && (
+              <div className={styles.seasonOptions}>
+                <SeasonSelector
+                  seasons={seasons}
+                  selectedSeason={selectedSeason}
+                  dropdownOpen={openDropdown === "season"}
+                  setDropdownOpen={() => handleDropdown("season")}
+                  setOpenDropdown={setOpenDropdown}
+                  handleSeasonChange={handleSeasonChange}
+                >
+                  Temporada
+                </SeasonSelector>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className={styles.optionsRight}>
+          {isMobile === null ? null : isMobile ? (
+            <div className={styles.mobileOptions}>
+              <MobileOptionsSelector
+                selectedMode={sortBy}
+                handleModeChange={setSortBy}
+                saveRanking={null}
+                downloadRanking={null}
+                dropdownOpen={openDropdown === "mobileOptions"}
+                setDropdownOpen={() => handleDropdown("mobileOptions")}
+              />
+            </div>
+          ) : (
+            <div className={styles.desktopOptions}>
+              <RankingModeSelector
+                selectedMode={sortBy}
+                dropdownOpen={openDropdown === "mode"}
+                setDropdownOpen={() => handleDropdown("mode")}
+                setOpenDropdown={setOpenDropdown}
+                handleModeChange={setSortBy}
+              >
+                Ordenar por
+              </RankingModeSelector>
+            </div>
+          )}
+        </div>
       </div>
       {selectedSeason && (
         <RankingTable

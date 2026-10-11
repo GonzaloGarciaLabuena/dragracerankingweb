@@ -1,145 +1,155 @@
 .selector {
-    position: relative;
-    width: fit-content;
+  position: relative;
+  width: 100%;
+  min-width: 0;
 }
 
 .selectorButton {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 
-    padding: 0.8rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.8rem 1rem;
 
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
 
-    background-color: var(--color-surface);
-    color: var(--color-text);
+  background-color: var(--color-surface);
+  color: var(--color-text);
 
-    font-size: 1rem;
-    text-align: left;
-    cursor: pointer;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
 }
 
 .selectorButton:hover {
-    border-color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
+}
+
+.selectorText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .caret {
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
 }
 
 .caretOpen {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .dropdown {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
 
-    width: max-content;
-    min-width: 100%;
-    max-height: 350px;
+  width: max-content;
+  min-width: 100%;
+  max-height: 350px;
 
-    overflow-y: auto;
+  overflow-y: auto;
 
-    padding: 0 0.35rem 0.35rem;
+  padding: 0 0.35rem 0.35rem;
 
-    background-color: var(--color-surface);
-    color: var(--color-text);
+  background-color: var(--color-surface);
+  color: var(--color-text);
 
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
 
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 
-    z-index: 100;
+  z-index: 100;
 }
 
 .dropLeft .dropdown {
-    left: auto;
-    right: 0;
+  left: auto;
+  right: 0;
 }
 
 .searchContainer {
-    position: sticky;
-    top: 0;
+  position: sticky;
+  top: 0;
 
-    padding: 10px 0;
+  padding: 10px 0;
 
-    background-color: var(--color-surface);
+  background-color: var(--color-surface);
 }
 
 .searchInput {
-    box-sizing: border-box;
+  box-sizing: border-box;
 
-    width: 100%;
+  width: 100%;
 
-    padding: 8px 10px;
+  padding: 8px 10px;
 
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
 
-    background-color: var(--color-surface);
-    color: var(--color-text);
+  background-color: var(--color-surface);
+  color: var(--color-text);
 
-    font-size: 1rem;
+  font-size: 1rem;
 
-    outline: none;
+  outline: none;
 }
 
 .searchInput:focus {
-    border-color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
 }
 
 .dropdownItem {
-    box-sizing: border-box;
+  box-sizing: border-box;
 
-    width: 100%;
+  width: 100%;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    padding: 0.7rem 0.8rem;
+  padding: 0.7rem 0.8rem;
 
-    white-space: nowrap;
+  white-space: nowrap;
 
-    border: none;
-    border-radius: 6px;
+  border: none;
+  border-radius: 6px;
 
-    background: transparent;
-    color: var(--color-text);
+  background: transparent;
+  color: var(--color-text);
 
-    text-align: left;
-    cursor: pointer;
+  text-align: left;
+  cursor: pointer;
 
-    transition: background-color 0.15s;
+  transition: background-color 0.15s;
 }
 
 .dropdownItem:hover {
-    background-color: var(--color-hover);
+  background-color: var(--color-hover);
 }
 
 .dropdownItem.selected {
-    background-color: var(--color-hover);
-    color: var(--color-text);
-    font-weight: 600;
+  background-color: var(--color-hover);
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .noResults {
-    padding: 10px;
+  padding: 10px;
 
-    text-align: center;
+  text-align: center;
 
-    color: var(--color-text-secondary);
+  color: var(--color-text-secondary);
 
-    font-size: 14px;
+  font-size: 14px;
 }
 
 @media (max-width: 768px) {
-
 }

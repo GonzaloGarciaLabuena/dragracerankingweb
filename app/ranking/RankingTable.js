@@ -24,6 +24,7 @@ export default function RankingTable({
   const initialDistance = useRef(null);
   const initialZoom = useRef(1);
   const isMobile = useIsMobile();
+  const zoomContentRef = useRef(null);
 
   const calculateStats = (queenId) => {
     let totalScore = 0;
@@ -169,6 +170,26 @@ export default function RankingTable({
     setTableName(season?.name, user?.username);
   }, [season, user]);
 
+  useEffect(() => {
+    if (!isMobile || !zoomContentRef.current) return;
+
+    const element = zoomContentRef.current;
+
+    const preventBrowserZoom = (event) => {
+      if (event.touches.length === 2) {
+        event.preventDefault();
+      }
+    };
+
+    element.addEventListener("touchmove", preventBrowserZoom, {
+      passive: false,
+    });
+
+    return () => {
+      element.removeEventListener("touchmove", preventBrowserZoom);
+    };
+  }, [isMobile]);
+
   const getDistance = (touches) => {
     const dx = touches[0].clientX - touches[1].clientX;
     const dy = touches[0].clientY - touches[1].clientY;
@@ -203,6 +224,7 @@ export default function RankingTable({
   return (
     <div className={styles.tableContainer}>
       <div
+        ref={zoomContentRef}
         className={styles.zoomContent}
         style={{ zoom: isMobile ? zoom : 1 }}
         onTouchStart={isMobile ? handleTouchStart : undefined}

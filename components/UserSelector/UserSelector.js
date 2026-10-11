@@ -3,6 +3,7 @@ import { FaCaretDown } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 
 export default function SeasonSelector({
+    children,
     users,
     selectedUser,
     dropdownOpen,
@@ -24,10 +25,10 @@ export default function SeasonSelector({
                 className={styles.selectorButton}
                 onClick={setDropdownOpen}
             >
-                <span>
+                <span className={styles.selectorText}>
                     {selectedUser
                         ? selectedUser.username
-                        : 'Selecciona un usuario'}
+                        : children}
                 </span>
 
                 <FaCaretDown

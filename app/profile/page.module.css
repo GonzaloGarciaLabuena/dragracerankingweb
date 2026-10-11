@@ -1,160 +1,260 @@
 .container {
-    min-height: 100vh;
-    padding-top : 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  min-height: 100vh;
+  padding: 10px 20px 30px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile {
-    width: 100%;
-    max-width: 1200px;
-    display: grid;
-    grid-template-columns: 1.2fr 2fr;
-    align-items: start;
-    gap: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1.2fr 2fr;
+  align-items: start;
+  gap: 1rem;
 }
 
 .section {
-    grid-column: 1;
+  grid-column: 1;
 }
 
 .header {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .header h1 {
-    margin: 0;
-    font-size: 32px;
+  margin: 0;
+  font-size: 32px;
 }
 
-.left {
-    padding: 25px;
-    margin-bottom: 20px;
-    background-color: var(--color-profile-background);
-    border: 1px solid var(--color-text);
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-.left h2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 0 20px;
-    font-size: 20px;
-}
-
+.left,
 .right {
-    padding: 25px;
-    margin-bottom: 20px;
-    background-color: var(--color-profile-background);
-    border: 1px solid var(--color-text);
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  min-width: 0;
+  padding: 25px;
+  margin-bottom: 20px;
+  background-color: var(--color-profile-background);
+  border: 1px solid var(--color-text);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
+.left h2,
 .right h2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 0 20px;
-    font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 20px;
+  font-size: 20px;
 }
 
 .info {
-    display: grid;
-    grid-template-columns: 120px 10px 1fr 100px;
-    align-items: center;
-    gap: 1rem;
-    padding: 15px 0;
-    border-bottom: 1px solid var(--color-text);
+  display: grid;
+  grid-template-columns: 120px 10px minmax(0, 1fr) 100px;
+  align-items: center;
+  gap: 1rem;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--color-text);
 }
 
 .info > :nth-child(1) {
-    justify-self: right;
+  justify-self: right;
 }
 
 .info > :nth-child(4) {
-    justify-self: center;
+  justify-self: center;
 }
 
 .info:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .editableValue {
-    width: 200px;
+  width: 200px;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .editableValue input {
-    width: 100%;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input {
-    width: 100%;
-    box-sizing: border-box;
-
-    padding: 0.7rem 0.8rem;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-text);
-    border-radius: 6px;
-
-    font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.8rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-text);
+  border-radius: 6px;
+  font-size: 1rem;
 }
 
 .editButton {
-    width: 80px;
+  width: 80px;
 }
 
 .label {
-    font-weight: 600;
-    color: var(--color-text);
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .comingSoon {
-    padding: 20px;
-    text-align: center;
-    background: var(--color-profile-background-secondary);
-    border-radius: 8px;
-    color: var(--color-text);
+  padding: 20px;
+  text-align: center;
+  background: var(--color-profile-background-secondary);
+  border-radius: 8px;
+  color: var(--color-text);
 }
 
 .comingSoon p {
-    margin: 0;
+  margin: 0;
 }
 
 .logout {
-    width: 100%;
-    font-size: 18px !important;
+  width: 100%;
+  font-size: 18px !important;
 }
 
 .error {
-    margin-bottom: 20px;
-    padding: 12px;
-    border-radius: 6px;
-    background: #ffe5e5;
-    color: #c00;
+  grid-column: 1 / -1;
+  margin-bottom: 20px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #ffe5e5;
+  color: #c00;
 }
 
 .avatarValue {
-    width: 200px;
-    display: flex;
-    justify-content: center;
+  width: 200px;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
 }
 
 .queenImage {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .separator {
-    width: 1px;
-    height: calc(var(--row-height) - 30px);
-    background-color: var(--color-text);
-    flex-shrink: 0;
+  width: 1px;
+  height: calc(var(--row-height) - 30px);
+  background-color: var(--color-text);
+  flex-shrink: 0;
+}
+
+/* MÓVIL */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px 12px 25px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    text-align: center;
+  }
+
+  .profile {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .left,
+  .right {
+    width: 100%;
+    padding: 18px 14px;
+    margin-bottom: 0;
+  }
+
+  .left h2,
+  .right h2 {
+    font-size: 19px;
+    margin-bottom: 15px;
+  }
+
+  .info {
+    grid-template-columns: 85px 1px minmax(0, 1fr) 65px;
+    gap: 8px;
+    padding: 14px 0;
+    font-size: 14px;
+    align-items: center;
+  }
+
+  .info > :nth-child(1) {
+    justify-self: center;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .info > :nth-child(3) {
+    justify-self: center;
+    text-align: center;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .info > :nth-child(4) {
+    justify-self: center;
+  }
+
+  .separator {
+    height: 100%;
+    min-height: 25px;
+  }
+
+  .editableValue {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .input {
+    padding: 0.6rem;
+    font-size: 14px;
+  }
+
+  .editButton {
+    width: 65px;
+    min-width: 0;
+    font-size: 13px;
+  }
+
+  .avatarValue {
+    width: 100%;
+  }
+
+  .queenImage {
+    width: 90px;
+    height: 90px;
+  }
+
+  .comingSoon {
+    padding: 16px 12px;
+    font-size: 14px;
+  }
+
+  .section {
+    grid-column: 1;
+    width: 100%;
+  }
+
+  .logout {
+    font-size: 16px !important;
+  }
+
+  .error {
+    margin-bottom: 10px;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+  }
 }

@@ -1,6 +1,7 @@
 import styles from "./RankingTable.module.css";
 import RankingRow from "./RankingRow";
 import { useEffect, useState, useRef } from "react";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function RankingTable({
   user,
@@ -19,6 +20,11 @@ export default function RankingTable({
 }) {
   const [mainTitle, setMainTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
+  const [zoom, setZoom] = useState(1);
+  const initialDistance = useRef(null);
+  const initialZoom = useRef(1);
+  const isMobile = useIsMobile();
+  const zoomContentRef = useRef(null);
 
   const calculateStats = (queenId) => {
     let totalScore = 0;
@@ -164,42 +170,103 @@ export default function RankingTable({
     setTableName(season?.name, user?.username);
   }, [season, user]);
 
+  useEffect(() => {
+    if (!isMobile || !zoomContentRef.current) return;
+
+    const element = zoomContentRef.current;
+
+    const preventBrowserZoom = (event) => {
+      if (event.touches.length === 2) {
+        event.preventDefault();
+      }
+    };
+
+    element.addEventListener("touchmove", preventBrowserZoom, {
+      passive: false,
+    });
+
+    return () => {
+      element.removeEventListener("touchmove", preventBrowserZoom);
+    };
+  }, [isMobile]);
+
+  const getDistance = (touches) => {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  const handleTouchStart = (event) => {
+    if (event.touches.length !== 2) return;
+
+    initialDistance.current = getDistance(event.touches);
+    initialZoom.current = zoom;
+  };
+
+  const handleTouchMove = (event) => {
+    if (event.touches.length !== 2 || initialDistance.current === null) {
+      return;
+    }
+
+    const currentDistance = getDistance(event.touches);
+    const scale = currentDistance / initialDistance.current;
+
+    setZoom(Math.min(2, Math.max(0.5, initialZoom.current * scale)));
+  };
+
+  const handleTouchEnd = (event) => {
+    if (event.touches.length < 2) {
+      initialDistance.current = null;
+    }
+  };
+
   return (
     <div className={styles.tableContainer}>
-      <table ref={tableRef} className={styles.rankingTable}>
-        <thead>
-          <tr>
-            <th className={styles.rankingHeader}>
-              <span>{mainTitle}</span>
-              <span>{subtitle}</span>
-            </th>
-
-            {episodes.map((episode) => (
-              <th key={episode.id} className={styles.episodeHeader}>
-                {episode.title}
+      <div
+        ref={zoomContentRef}
+        data-zoom={isMobile ? zoom : 1}
+        className={styles.zoomContent}
+        style={{ zoom: isMobile ? zoom : 1 }}
+        onTouchStart={isMobile ? handleTouchStart : undefined}
+        onTouchMove={isMobile ? handleTouchMove : undefined}
+        onTouchEnd={isMobile ? handleTouchEnd : undefined}
+      >
+        <table ref={tableRef} className={styles.rankingTable}>
+          <thead>
+            <tr>
+              <th className={styles.rankingHeader}>
+                <span>{mainTitle}</span>
+                <span>{subtitle}</span>
               </th>
-            ))}
-          </tr>
-        </thead>
 
-        <tbody>
-          {rankedQueens.map((queen, index) => (
-            <RankingRow
-              key={queen.id}
-              queen={queen}
-              episodes={episodes}
-              pointTypesNormal={pointTypesNormal}
-              pointTypesFinal={pointTypesFinal}
-              pointTypesFinalDraga={pointTypesFinalDraga}
-              pointsMap={pointsMap}
-              setPointsMap={setPointsMap}
-              activeCell={activeCell}
-              setActiveCell={setActiveCell}
-              position={getPosition(index)}
-            />
-          ))}
-        </tbody>
-      </table>
+              {episodes.map((episode) => (
+                <th key={episode.id} className={styles.episodeHeader}>
+                  {episode.title}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {rankedQueens.map((queen, index) => (
+              <RankingRow
+                key={queen.id}
+                queen={queen}
+                episodes={episodes}
+                pointTypesNormal={pointTypesNormal}
+                pointTypesFinal={pointTypesFinal}
+                pointTypesFinalDraga={pointTypesFinalDraga}
+                pointsMap={pointsMap}
+                setPointsMap={setPointsMap}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                position={getPosition(index)}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

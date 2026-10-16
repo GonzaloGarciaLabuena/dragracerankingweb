@@ -10,6 +10,7 @@ import { supabaseStorageService } from "@/lib/services/supabaseStorageService";
 import { wikiImgService } from "@/lib/services/wikiImgService";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
 import CButton from "@/components/CButton/CButton";
+import AdminErrorModal from "@/components/AdminErrorModal/AdminErrorModal";
 
 export default function QueensAdmin() {
   const [queens, setQueens] = useState([]);
@@ -22,6 +23,7 @@ export default function QueensAdmin() {
   const [seasons, setSeasons] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedQueen, setSelectedQueen] = useState(null);
+  const [adminError, setAdminError] = useState(null);
 
   const optionsRef = useRef(null);
 
@@ -104,7 +106,7 @@ export default function QueensAdmin() {
           setOpenDropdown={setOpenDropdown}
           handleSeasonChange={handleSeasonChange}
         >
-          Seleccionar una temporada
+          Temporada
         </SeasonSelector>
         <CButton
           onClick={() => {
@@ -112,14 +114,14 @@ export default function QueensAdmin() {
             setSelectedSeason(null);
           }}
         >
-          Limpiar Filtros
+          Limpiar
         </CButton>
         <CButton
           onClick={() => {
             setNewQueen(true);
           }}
         >
-          Añadir Reina
+          Añadir
         </CButton>
       </div>
 
@@ -198,23 +200,33 @@ export default function QueensAdmin() {
         <QueenNewModal
           season={selectedSeason}
           onClose={() => setNewQueen(false)}
-          onSave={async ({ name, url, season }) => {
-            if (await queenService.createQueen(name, season, url)) {
-              alert(`Reina ${name} creada correctamente`);
-              if (selectedSeason) {
-                fetchQueensOnlySeason(selectedSeason);
+          onSave={async ({ name, image_url, season }) => {
+            try {
+              const result = await queenService.createQueen(name, season, image_url);
+
+              if (result) {
+                alert(`Reina ${name} creada correctamente`);
+
+                if (selectedSeason) {
+                  await fetchQueensOnlySeason(selectedSeason);
+                } else {
+                  await fetchAllQueens(page);
+                }
+
+                setNewQueen(false);
               } else {
-                fetchAllQueens(page);
+                setAdminError(new Error(`Error creando la reina ${name}`));
               }
-              setNewQueen(false);
-            } else {
-              alert(`Error creando la Reina ${name}`);
+            } catch (error) {
+              console.error("Error creando reina:", error);
+              setAdminError(error);
             }
           }}
         >
           Añadir nueva reina
         </QueenNewModal>
       )}
+      <AdminErrorModal error={adminError} onClose={() => setAdminError(null)} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { seasonService } from "@/lib/services/seasonService";
 import { wikiImgService } from "@/lib/services/wikiImgService";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
 import CButton from "@/components/CButton/CButton";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function QueenNewModal({
   children,
@@ -23,6 +24,7 @@ export default function QueenNewModal({
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const optionsRef = useRef(null);
+  const isMobile = useIsMobile();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,53 +72,110 @@ export default function QueenNewModal({
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <div className={styles.formInputContainer}>
-              <label className={styles.formLabel}>Nombre</label>
+            {isMobile === null ? null : isMobile ? (
+              <div className={styles.mobileForm}>
+                <div className={styles.formLabelContainer}>
+                  <label className={styles.formLabel}>Nombre</label>
+                </div>
+                <div className={styles.formInputContainer}>
+                  <input
+                    id="queenName"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={styles.formInput}
+                    autoFocus
+                  />
+                </div>
 
-              <input
-                id="queenName"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className={styles.formInput}
-                autoFocus
-              />
-            </div>
+                <div className={styles.formLabelContainer}>
+                  <label className={styles.formLabel}>Temporada</label>
+                </div>
+                <div className={styles.formInputContainer}>
+                  <div ref={optionsRef} className={styles.seasonContainer}>
+                    <span className={styles.seasonName}>
+                      {selectedSeason?.name}
+                    </span>
 
-            <div className={styles.formInputContainer}>
-              <label className={styles.formLabel}>Temporada</label>
+                    <SeasonSelector
+                      seasons={seasons}
+                      selectedSeason={selectedSeason}
+                      dropdownOpen={openDropdown === "user"}
+                      setDropdownOpen={() => handleDropdown("user")}
+                      setOpenDropdown={setOpenDropdown}
+                      handleSeasonChange={handleSeasonChange}
+                      dropLeft
+                    />
+                  </div>
+                </div>
 
-              <div ref={optionsRef} className={styles.seasonContainer}>
-                <span className={styles.seasonName}>
-                  {selectedSeason?.name}
-                </span>
-
-                <SeasonSelector
-                  seasons={seasons}
-                  selectedSeason={selectedSeason}
-                  dropdownOpen={openDropdown === "user"}
-                  setDropdownOpen={() => handleDropdown("user")}
-                  setOpenDropdown={setOpenDropdown}
-                  handleSeasonChange={handleSeasonChange}
-                  dropLeft
-                />
+                <div className={styles.formLabelContainer}>
+                  <label className={styles.formLabel}>Url</label>
+                </div>
+                <div className={styles.formInputContainer}>
+                  <input
+                    id="urlImg"
+                    type="text"
+                    value={url}
+                    onChange={(e) => {
+                      setUrl(e.target.value);
+                      setImagePreview(e.target.value);
+                    }}
+                    className={styles.formInput}
+                  />
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={styles.desktopForm}>
+                <div className={styles.formInputContainer}>
+                  <label className={styles.formLabel}>Nombre</label>
 
-            <div className={styles.formInputContainer}>
-              <label className={styles.formLabel}>Url</label>
+                  <input
+                    id="queenName"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={styles.formInput}
+                    autoFocus
+                  />
+                </div>
+                <div className={styles.formInputContainer}>
+                  <label className={styles.formLabel}>Temporada</label>
 
-              <input
-                id="urlImg"
-                type="text"
-                value={url}
-                onChange={(e) => {
-                  setUrl(e.target.value);
-                  setImagePreview(e.target.value);
-                }}
-                className={styles.formInput}
-              />
-            </div>
+                  <div ref={optionsRef} className={styles.seasonContainer}>
+                    <span className={styles.seasonName}>
+                      {selectedSeason?.name}
+                    </span>
+
+                    <SeasonSelector
+                      seasons={seasons}
+                      selectedSeason={selectedSeason}
+                      dropdownOpen={openDropdown === "user"}
+                      setDropdownOpen={() => handleDropdown("user")}
+                      setOpenDropdown={setOpenDropdown}
+                      handleSeasonChange={handleSeasonChange}
+                      dropLeft
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formInputContainer}>
+                  <label className={styles.formLabel}>Url</label>
+
+                  <input
+                    id="urlImg"
+                    type="text"
+                    value={url}
+                    onChange={(e) => {
+                      setUrl(e.target.value);
+                      setImagePreview(e.target.value);
+                    }}
+                    className={styles.formInput}
+                  />
+                </div>
+              </div>
+            )}
+
             <div className={styles.ImgContainer}>
               {imagePreview ? (
                 <img

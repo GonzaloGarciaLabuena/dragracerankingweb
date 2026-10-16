@@ -1,92 +1,82 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { FaCaretDown } from 'react-icons/fa'
+import { useState } from "react";
+import { FaCaretDown } from "react-icons/fa";
 
-import QueensAdmin from './queens/QueensAdmin'
-import SeasonsAdmin from './seasons/SeasonsAdmin'
-import ProfilesAdmin from './profiles/ProfilesAdmin'
+import QueensAdmin from "./queens/QueensAdmin";
+import SeasonsAdmin from "./seasons/SeasonsAdmin";
+import ProfilesAdmin from "./profiles/ProfilesAdmin";
 
-import styles from './page.module.css'
+import useIsMobile from "@/hooks/useIsMobile";
+import styles from "./page.module.css";
 
 export default function AdminPage() {
-    const [modeIsOpen, setModeIsOpen] = useState(false)
-    const [mode, setMode] = useState('Reinas')
+  const [modeIsOpen, setModeIsOpen] = useState(false);
+  const [mode, setMode] = useState("Reinas");
 
-    const modes = [
-        'Reinas',
-        'Temporadas',
-        'Perfiles'
-    ]
+  const isMobile = useIsMobile();
 
-    const handleModeChange = (newMode) => {
-        setMode(newMode)
-        setModeIsOpen(false)
-    }
+  const modes = ["Reinas", "Temporadas", "Perfiles"];
 
-    return (
-        <main className={styles.container}>
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    setModeIsOpen(false);
+  };
 
-            <div className={styles.header}>
+  const renderModeSelector = () => (
+    <div className={styles.modeSelector}>
+      <button
+        type="button"
+        className={styles.modeButton}
+        onClick={() => setModeIsOpen((prev) => !prev)}
+      >
+        {mode}
 
-                <div className={styles.left}>
-                    <h1>Administración</h1>
-                </div>
-                
-                <div className={styles.right}>
-                    <div className={styles.modeSelector}>
+        <FaCaretDown className={modeIsOpen ? styles.caretOpen : styles.caret} />
+      </button>
 
-                        <button
-                            type="button"
-                            className={styles.modeButton}
-                            onClick={() => setModeIsOpen(prev => !prev)}
-                        >
-                            {mode}
+      {modeIsOpen && (
+        <div className={styles.dropdown}>
+          {modes.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={`${styles.dropdownItem} ${
+                mode === item ? styles.selected : ""
+              }`}
+              onClick={() => handleModeChange(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
-                            <FaCaretDown
-                                className={
-                                    modeIsOpen
-                                        ? styles.caretOpen
-                                        : styles.caret
-                                }
-                            />
-                        </button>
+  return (
+    <main className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.left}>
+          <h1>Administración</h1>
+        </div>
 
-                        {modeIsOpen && (
-                            <div className={styles.dropdown}>
-                                {modes.map((item) => (
-                                    <button
-                                        key={item}
-                                        type="button"
-                                        className={`${styles.dropdownItem} ${
-                                            mode === item
-                                                ? styles.selected
-                                                : ''
-                                        }`}
-                                        onClick={() =>
-                                            handleModeChange(item)
-                                        }
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+        {isMobile === false && (
+          <div className={styles.right}>{renderModeSelector()}</div>
+        )}
+      </div>
 
-                    </div>
-                </div>
-            </div>
+      {isMobile === true && (
+        <div className={styles.mobileSelector}>{renderModeSelector()}</div>
+      )}
 
-            <section className={styles.content}>
+      <section className={styles.content}>
+        {mode === "Reinas" && <QueensAdmin />}
 
-                {mode === 'Reinas' && <QueensAdmin />}
+        {mode === "Temporadas" && <SeasonsAdmin />}
 
-                {mode === 'Temporadas' && <SeasonsAdmin />}
-
-                {mode === 'Perfiles' && <ProfilesAdmin />}
-
-            </section>
-
-        </main>
-    )
+        {mode === "Perfiles" && <ProfilesAdmin />}
+      </section>
+    </main>
+  );
 }

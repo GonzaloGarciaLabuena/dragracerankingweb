@@ -1,152 +1,163 @@
 .container {
-    width: 100%;
-    min-height: 100vh;
-    padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding-bottom: 10px;
 }
 
 .header .left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .header .right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .header h1 {
-    margin: 0;
-    font-size: 2rem;
-    color: var(--color-text);
+  margin: 0;
+  font-size: 2rem;
+  color: var(--color-text);
 }
 
 /* Selector */
 
 .modeSelector {
-    position: relative;
+  position: relative;
 }
 
 .modeButton {
-    min-width: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 
-    padding: 0.7rem 1rem;
+  padding: 0.7rem 1rem;
 
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
 
-    background-color: var(--color-surface);
-    color: var(--color-text);
+  background-color: var(--color-surface);
+  color: var(--color-text);
 
-    font-size: 1rem;
-    font-weight: 500;
+  font-size: 1rem;
+  font-weight: 500;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .modeButton:hover {
-    border-color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
 }
 
 .modeButton:focus {
-    outline: none;
-    border-color: #666;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+  outline: none;
+  border-color: #666;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
 }
 
 .caret {
-    transition: transform 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .caretOpen {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 /* Dropdown */
 
 .dropdown {
-    position: absolute;
-    top: calc(100% + 0.4rem);
-    left: 0;
-    right: 0;
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    padding: 0.35rem;
+  padding: 0.35rem;
 
-    background-color: var(--color-surface);
+  background-color: var(--color-surface);
 
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
 
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 
-    z-index: 100;
+  z-index: 100;
 }
 
 .dropdownItem {
-    box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
 
-    width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  padding: 0.7rem 0.8rem;
+  white-space: nowrap;
 
-    padding: 0.7rem 0.8rem;
+  border: none;
+  border-radius: 6px;
 
-    white-space: nowrap;
+  background: transparent;
+  color: var(--color-text);
 
-    border: none;
-    border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
 
-    background: transparent;
-    color: var(--color-text);
-
-    text-align: left;
-    cursor: pointer;
-
-    transition: background-color 0.15s;
+  transition: background-color 0.15s;
 }
 
 .dropdownItem:hover {
-    background-color: var(--color-hover);
+  background-color: var(--color-hover);
 }
 
 .dropdownItem.selected {
-    font-weight: 600;
-    border: 1px solid var(--color-border);
+  font-weight: 600;
+  border: 1px solid var(--color-border);
 }
 
 /* Contenido */
 
 .content {
-    width: 100%;
+  width: 100%;
 }
 
 .content h2 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 .content p {
-    margin-top: 0;
-    color: var(--color-text);
+  margin-top: 0;
+  color: var(--color-text);
+}
+
+.mobileSelector {
+  width: 100%;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.mobileSelector .modeSelector,
+.mobileSelector .modeButton {
+  width: 100%;
 }

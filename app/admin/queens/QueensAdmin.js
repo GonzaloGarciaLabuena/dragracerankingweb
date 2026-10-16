@@ -106,7 +106,7 @@ export default function QueensAdmin() {
           setOpenDropdown={setOpenDropdown}
           handleSeasonChange={handleSeasonChange}
         >
-          Seleccionar una temporada
+          Temporada
         </SeasonSelector>
         <CButton
           onClick={() => {
@@ -114,14 +114,14 @@ export default function QueensAdmin() {
             setSelectedSeason(null);
           }}
         >
-          Limpiar Filtros
+          Limpiar
         </CButton>
         <CButton
           onClick={() => {
             setNewQueen(true);
           }}
         >
-          Añadir Reina
+          Añadir
         </CButton>
       </div>
 

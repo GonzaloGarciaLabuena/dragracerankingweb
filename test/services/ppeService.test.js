@@ -39,11 +39,14 @@ describe("ppeService", () => {
 
       const pointsMap = new Map([["queen1|episode1", { id: "point1" }]]);
 
+      const pointsMapLipsync = new Map([["episode1|battle1|queen1", { id: "point2" }]]);
+
       const result = await ppeService.saveRanking(
         season,
         queens,
         episodes,
         pointsMap,
+        pointsMapLipsync,
       );
 
       expect(ppeApiClient.saveRanking).toHaveBeenCalledWith({
@@ -58,6 +61,12 @@ describe("ppeService", () => {
             queen_id: "queen2",
             episode_id: "episode1",
             point_type_id: null,
+          },
+          {
+            battle_id: "battle1",
+            queen_id: "queen1",
+            episode_id: "episode1",
+            point_type_id: "point2",
           },
         ],
       });
@@ -91,9 +100,16 @@ describe("ppeService", () => {
       const queens = [{ id: "queen1" }];
       const episodes = [{ id: "episode1" }];
       const pointsMap = new Map();
+      const pointsMapLipsync = new Map();
 
       await expect(
-        ppeService.saveRanking(season, queens, episodes, pointsMap),
+        ppeService.saveRanking(
+          season,
+          queens,
+          episodes,
+          pointsMap,
+          pointsMapLipsync,
+        ),
       ).rejects.toThrow("Error saving ranking");
     });
   });
@@ -135,7 +151,7 @@ describe("ppeService", () => {
 
       expect(ppeApiClient.getRanking).toHaveBeenCalledWith(season.id);
 
-      expect(result.get("queen1|episode1")).toEqual(pointTypes[0]);
+      expect(result.pointsMap.get("queen1|episode1")).toEqual(pointTypes[0]);
     });
 
     it("devuelve todos los errores cuando la entrada es inválida", async () => {
@@ -156,9 +172,9 @@ describe("ppeService", () => {
 
       const season = { id: "season1" };
       const pointTypes = [{ id: "point1" }];
-      await expect(
-        ppeService.getRanking(season, pointTypes),
-      ).rejects.toThrow("Error getting ranking");
+      await expect(ppeService.getRanking(season, pointTypes)).rejects.toThrow(
+        "Error getting ranking",
+      );
     });
   });
 
@@ -272,9 +288,9 @@ describe("ppeService", () => {
       ppeApiClient.publishRanking.mockRejectedValue(apiError);
 
       const season = { id: "season1" };
-      await expect(
-        ppeService.publishRanking(season),
-      ).rejects.toThrow("Error publishing ranking");
+      await expect(ppeService.publishRanking(season)).rejects.toThrow(
+        "Error publishing ranking",
+      );
     });
   });
 
@@ -299,7 +315,9 @@ describe("ppeService", () => {
         ],
       ]);
 
-      ppeService.getRanking = async () => ranking;
+      ppeService.getRanking = async () => ({
+        pointsMap: ranking,
+      });
 
       const season = {
         id: "season1",
@@ -359,7 +377,9 @@ describe("ppeService", () => {
         ],
       ]);
 
-      ppeService.getRanking = async () => ranking;
+      ppeService.getRanking = async () => ({
+        pointsMap: ranking,
+      });
 
       const season = { id: "season1" };
       const pointTypes = [
@@ -411,13 +431,13 @@ describe("ppeService", () => {
 
     it("devuelve todos los errores cuando la entrada es inválida", async () => {
       const error = await ppeService
-        .getHallOfFame({id: 123})
+        .getHallOfFame({ id: 123 })
         .catch((error) => error);
 
       expect(error.message).toBe("Invalid data");
 
       expect(error.cause).toEqual([
-        "User ID is required to get the ranking of a user"
+        "User ID is required to get the ranking of a user",
       ]);
     });
 
@@ -427,9 +447,9 @@ describe("ppeService", () => {
       ppeApiClient.getHallOfFame.mockRejectedValue(apiError);
 
       const user = { id: "user1" };
-      await expect(
-        ppeService.getHallOfFame(user),
-      ).rejects.toThrow("Error obteniendo Hall of Fame");
+      await expect(ppeService.getHallOfFame(user)).rejects.toThrow(
+        "Error obteniendo Hall of Fame",
+      );
     });
   });
 
@@ -503,7 +523,9 @@ describe("ppeService", () => {
 
       const pointsMap = new Map();
 
-      const result = rowsToSave(queens, episodes, pointsMap);
+      const pointsMapLipsync = new Map();
+
+      const result = rowsToSave(queens, episodes, pointsMap, pointsMapLipsync);
 
       expect(result).toHaveLength(4);
 
@@ -538,11 +560,13 @@ describe("ppeService", () => {
 
       const pointsMap = new Map();
 
+      const pointsMapLipsync = new Map();
+
       pointsMap.set("queen1|episode1", {
         id: "point1",
       });
 
-      const result = rowsToSave(queens, episodes, pointsMap);
+      const result = rowsToSave(queens, episodes, pointsMap, pointsMapLipsync);
 
       expect(result).toEqual([
         {

@@ -28,6 +28,7 @@ describe("episodeService", () => {
         title: "episodeTitle",
         esFinal: false,
         esFinalDraga: false,
+        esLalaparuza: false,
       };
 
       const data = {
@@ -35,6 +36,7 @@ describe("episodeService", () => {
         title: "episodeTitle",
         esFinal: false,
         esFinalDraga: false,
+        esLalaparuza: false,
       };
 
       episodeApiClient.create.mockResolvedValue(data);
@@ -70,6 +72,7 @@ describe("episodeService", () => {
       expect(error.cause).toEqual([
         "Title for the episode is required",
         "Final values for the episode are required",
+        "Lalaparuza values for the episode are required"
       ]);
     });
 
@@ -79,6 +82,7 @@ describe("episodeService", () => {
           title: "title",
           esFinal: true,
           esFinalDraga: true,
+          esLalaparuza: false
         })
         .catch((error) => error);
 
@@ -99,6 +103,7 @@ describe("episodeService", () => {
         title: "episodeTitle",
         esFinal: false,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       await expect(
@@ -262,12 +267,14 @@ describe("episodeService", () => {
         title: "title1",
         esFinal: false,
         esFinalDraga: false,
+        esLalaparuza: false
       };
       const episodeNew = {
         id: "episode1",
         title: "titleNew",
         esFinal: true,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       const data = {
@@ -275,6 +282,7 @@ describe("episodeService", () => {
         title: "titleNew",
         esFinal: true,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       episodeApiClient.update.mockResolvedValue({ success: true, data });
@@ -314,6 +322,7 @@ describe("episodeService", () => {
         "Season ID is required to create the episode",
         "Title for the episode is required",
         "Final values for the episode are required",
+        "Lalaparuza values for the episode are required"
       ]);
     });
 
@@ -324,6 +333,7 @@ describe("episodeService", () => {
           title: "title",
           esFinal: true,
           esFinalDraga: true,
+          esLalaparuza: false
         })
         .catch((error) => error);
 
@@ -344,6 +354,7 @@ describe("episodeService", () => {
         title: "titleNew",
         esFinal: true,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       await expect(

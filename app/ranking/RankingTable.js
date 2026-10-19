@@ -2,6 +2,8 @@ import styles from "./RankingTable.module.css";
 import RankingRow from "./RankingRow";
 import { useEffect, useState, useRef } from "react";
 import useIsMobile from "@/hooks/useIsMobile";
+import { lipsyncService } from "@/lib/services/lipsyncService";
+import LipsyncRankingModal from "@/components/LipsyncRankingModal/LipsyncRankingModal";
 
 export default function RankingTable({
   user,
@@ -11,8 +13,11 @@ export default function RankingTable({
   pointTypesNormal,
   pointTypesFinal,
   pointTypesFinalDraga,
+  pointTypesLipsync,
   pointsMap,
+  pointsMapLipsync,
   setPointsMap,
+  setPointsMapLipsync,
   activeCell,
   setActiveCell,
   tableRef,
@@ -25,6 +30,9 @@ export default function RankingTable({
   const initialZoom = useRef(1);
   const isMobile = useIsMobile();
   const zoomContentRef = useRef(null);
+  const [selectedLipsyncEpisode, setSelectedLipsyncEpisode] = useState(null);
+  const [lipsyncBattles, setLipsyncBattles] = useState([]);
+  const [loadingLipsync, setLoadingLipsync] = useState(false);
 
   const calculateStats = (queenId) => {
     let totalScore = 0;
@@ -221,6 +229,23 @@ export default function RankingTable({
     }
   };
 
+  const handleOpenLipsync = async (episode) => {
+    if (loadingLipsync) return;
+
+    setLoadingLipsync(true);
+
+    try {
+      const battles = await lipsyncService.getBattles(episode);
+
+      setLipsyncBattles(battles);
+      setSelectedLipsyncEpisode(episode);
+    } catch (error) {
+      console.error("Error cargando las batallas de Lipsync:", error);
+    } finally {
+      setLoadingLipsync(false);
+    }
+  };
+
   return (
     <div className={styles.tableContainer}>
       <div
@@ -240,11 +265,13 @@ export default function RankingTable({
                 <span>{subtitle}</span>
               </th>
 
-              {episodes.map((episode) => (
-                <th key={episode.id} className={styles.episodeHeader}>
-                  {episode.title}
-                </th>
-              ))}
+              {episodes.map((episode) => {
+                return (
+                  <th key={episode.id} className={styles.episodeHeader}>
+                    {episode.title}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
 
@@ -262,10 +289,22 @@ export default function RankingTable({
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
                 position={getPosition(index)}
+                onOpenLipsync={handleOpenLipsync}
               />
             ))}
           </tbody>
         </table>
+        {selectedLipsyncEpisode && (
+          <LipsyncRankingModal
+            episode={selectedLipsyncEpisode}
+            battles={lipsyncBattles}
+            queens={queens}
+            pointTypesLipsync={pointTypesLipsync}
+            pointsMapLipsync={pointsMapLipsync}
+            setPointsMapLipsync={setPointsMapLipsync}
+            onClose={() => setSelectedLipsyncEpisode(null)}
+          />
+        )}
       </div>
     </div>
   );

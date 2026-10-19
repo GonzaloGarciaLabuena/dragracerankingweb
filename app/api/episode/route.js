@@ -23,6 +23,7 @@ export async function GET(request) {
             title,
             esFinal,
             esFinalDraga,
+            esLalaparuza,
             ppe_reference!inner(id)
         `,
     )

@@ -1,6 +1,10 @@
+
+"use client";
+
 import styles from "./RankingRow.module.css";
 import RankingCell from "./RankingCell";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 export default function RankingRow({
   queen,
   episodes,
@@ -12,6 +16,7 @@ export default function RankingRow({
   activeCell,
   setActiveCell,
   position,
+  onOpenLipsync,
 }) {
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -45,11 +50,37 @@ export default function RankingRow({
 
       {episodes.map((episode) => {
         const key = `${queen.id}|${episode.id}`;
+
+        // Los episodios de Lipsync abren el modal.
+        if (episode.esLalaparuza) {
+          return (
+            <td
+              key={episode.id}
+              className={`${styles.scoreCell} ${styles.lipsyncCell}`}
+              onClick={() => onOpenLipsync(episode)}
+              title="Abrir ranking de Lipsync"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onOpenLipsync(episode);
+                }
+              }}
+            >
+              <span className={styles.lipsyncCellContent}>
+                Lipsync
+              </span>
+            </td>
+          );
+        }
+
         const pointTypes = episode.esFinal
           ? pointTypesFinal
           : episode.esFinalDraga
             ? pointTypesFinalDraga
             : pointTypesNormal;
+
         return (
           <td key={episode.id} className={styles.scoreCell}>
             <RankingCell

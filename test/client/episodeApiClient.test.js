@@ -16,6 +16,7 @@ describe("episodeApiClient", () => {
         title: "episodeTitle",
         esFinal: false,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       const data = {
@@ -23,6 +24,7 @@ describe("episodeApiClient", () => {
         title: "episodeTitle",
         esFinal: false,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       fetch.mockResolvedValue({
@@ -59,6 +61,7 @@ describe("episodeApiClient", () => {
           "Title is required to create episode",
           "esFinal must be a boolean to create episode",
           "esFinalDraga must be a boolean to create episode",
+          "esLalaparuza must be a boolean to create episode"
         ],
       });
 
@@ -103,6 +106,7 @@ describe("episodeApiClient", () => {
             title: "episodeTitle",
             esFinal: false,
             esFinalDraga: false,
+            esLalaparuza: false
           },
         }),
       ).rejects.toThrow("Error creating episode");
@@ -121,6 +125,7 @@ describe("episodeApiClient", () => {
             title: "episodeTitle",
             esFinal: false,
             esFinalDraga: false,
+            esLalaparuza: false
           },
         }),
       ).rejects.toThrow("Error creating episode");
@@ -340,6 +345,7 @@ describe("episodeApiClient", () => {
         title: "titleNew",
         esFinal: true,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       const data = {
@@ -347,6 +353,7 @@ describe("episodeApiClient", () => {
         title: "titleNew",
         esFinal: true,
         esFinalDraga: false,
+        esLalaparuza: false
       };
 
       fetch.mockResolvedValue({
@@ -384,6 +391,7 @@ describe("episodeApiClient", () => {
           "Title is required to update episode",
           "esFinal must be a boolean to update episode",
           "esFinalDraga must be a boolean to update episode",
+          "esLalaparuza must be a boolean to update episode"
         ],
       });
 
@@ -405,6 +413,7 @@ describe("episodeApiClient", () => {
             title: "titleNew",
             esFinal: true,
             esFinalDraga: false,
+            esLalaparuza: false,
           },
         }),
       ).rejects.toThrow("Error updating episode");
@@ -423,6 +432,7 @@ describe("episodeApiClient", () => {
             title: "titleNew",
             esFinal: true,
             esFinalDraga: false,
+            esLalaparuza: false,
           },
         }),
       ).rejects.toThrow("Error updating episode");

@@ -20,9 +20,13 @@ export async function GET(request) {
     query = query.eq("esParaFinal", true);
   } else if (mode === "finalDraga") {
     query = query.eq("esParaFinalDraga", true);
-  } else {
+  } else if (mode === "lipsync") {
+    query = query.eq("esParaLipsync", true);
+  }else {
     query = query.eq("esParaFinal", false);
     query = query.eq("esParaFinalDraga", false);
+    query = query.eq("esParaLipsync", false);
+
   }
 
   const { data, error: dbError } = await query;

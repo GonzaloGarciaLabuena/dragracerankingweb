@@ -1,0 +1,142 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 32px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  padding: 24px;
+  overflow-y: auto;
+
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.modal h3 {
+  margin: 0;
+}
+
+.battleList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.battle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 16px;
+  border: 1px solid var(--color-text);
+  border-radius: 8px;
+}
+
+.battleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.battleTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.battleFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.battleQueens {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.formLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.formInput {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 10px;
+
+  border: 1px solid var(--color-text);
+  border-radius: 6px;
+  box-sizing: border-box;
+  background: var(--color-surface);
+}
+
+.battleActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .modal {
+    padding: 16px;
+  }
+
+  .battle {
+    padding: 12px;
+  }
+
+  .battleFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .battleActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .battleActions > * {
+    width: 100%;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+
+  .modalActions > * {
+    width: 100%;
+  }
+}

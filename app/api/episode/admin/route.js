@@ -13,7 +13,7 @@ export async function GET(request) {
 
   const { data, error: dbError } = await supabase
     .from("episode")
-    .select("id, number, title, esFinal, esFinalDraga")
+    .select("id, number, title, esFinal, esFinalDraga, esLalaparuza")
     .eq("season_id", seasonId)
     .order("number", { ascending: true });
   if (dbError) {
@@ -40,6 +40,7 @@ export async function POST(request) {
       title: newEpisode.title,
       esFinal: newEpisode.esFinal,
       esFinalDraga: newEpisode.esFinalDraga,
+      esLalaparuza: newEpisode.esLalaparuza
     })
     .select(); // Devuelve el dato insertado
 
@@ -109,10 +110,21 @@ export async function PATCH(request) {
     );
   }
 
+  if (episode.esLalaparuza === null) {
+    return Response.json(
+      {
+        error:
+          "Is lalaparuza episode is required for a lalaparuza episode",
+      },
+      { status: 400 },
+    );
+  }
+
   const updates = {
     title: episode.title,
     esFinal: episode.esFinal,
     esFinalDraga: episode.esFinalDraga,
+    esLalaparuza: episode.esLalaparuza
   };
   
   const { data, error: dbError } = await supabase

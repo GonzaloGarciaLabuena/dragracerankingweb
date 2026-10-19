@@ -65,7 +65,7 @@
   height: 100%;
 
   overflow: hidden;
-  background: #fff;
+  background: var(--color-surface-secondary);
   border-radius: 18px;
 
   box-shadow:
@@ -105,9 +105,8 @@
   font-weight: 700;
   line-height: 1.2;
 
-  color: #222;
-  background: #fafafa;
-  border-bottom: 1px solid #eee;
+  color: var(--color-text);
+  background: var(--color-surface-secondary);
 }
 
 /* WINNER IMAGE */
@@ -154,7 +153,7 @@
   line-height: 1.2;
 
   overflow-wrap: anywhere;
-  color: #222;
+  color: var(--color-text);
 }
 
 .winnerInfo span {
@@ -169,10 +168,10 @@
   padding: 5px 12px;
   border-radius: 20px;
 
-  background: #f1f1f1;
+  background: var(--color-background);
   font-size: clamp(0.75rem, 1.2vw, 0.9rem);
   font-weight: 600;
-  color: #555;
+  color: var(--color-text);
 }
 
 /* LOADING */

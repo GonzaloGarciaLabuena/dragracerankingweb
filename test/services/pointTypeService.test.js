@@ -29,6 +29,7 @@ describe("pointTypeService", () => {
           hexaColor: "#ffffff",
           esParaFinal: "false",
           esParaFinalDraga: "false",
+          esParaLipsync: "false"
         },
         {
           id: "point2",
@@ -37,6 +38,7 @@ describe("pointTypeService", () => {
           hexaColor: "#fffff0",
           esParaFinal: "false",
           esParaFinalDraga: "false",
+          esParaLipsync: "false"
         },
       ];
       pointtypeApiClient.getAll.mockResolvedValue(data);
@@ -67,7 +69,7 @@ describe("pointTypeService", () => {
       expect(error.message).toBe("Invalid data");
 
       expect(error.cause).toEqual([
-        "Mode not permited (default, final, finalDraga)",
+        "Mode not permited (default, final, finalDraga, lipsync)",
       ]);
     });
   });

@@ -20,6 +20,7 @@ describe("pointtypeApiClient", () => {
           hexaColor: "#ffffff",
           esParaFinal: "false",
           esParaFinalDraga: "false",
+          esParaLipsync: "false"
         },
         {
           id: "point2",
@@ -28,6 +29,7 @@ describe("pointtypeApiClient", () => {
           hexaColor: "#fffff0",
           esParaFinal: "false",
           esParaFinalDraga: "false",
+          esParaLipsync: "false"
         },
       ];
 
@@ -62,7 +64,7 @@ describe("pointtypeApiClient", () => {
     it("throws an error when mode is not permited", async () => {
       await expect(pointtypeApiClient.getAll('test')).rejects.toMatchObject({
         message: "Invalid data",
-        cause: ["Mode not permited (default, final, finalDraga)"],
+        cause: ["Mode not permited (default, final, finalDraga, lipsync)"],
       });
 
       expect(fetch).not.toHaveBeenCalled();

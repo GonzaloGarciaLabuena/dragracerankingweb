@@ -40,7 +40,8 @@ export async function GET(request) {
                     ),
                     episode_id!inner(
                         esFinal,
-                        esFinalDraga
+                        esFinalDraga,
+                        esLalaparuza
                     ),
                     queen_id!inner(
                         id,
@@ -83,6 +84,7 @@ const createCompleteSeasonMap = (data, imageMap) => {
     const pointType = item.point_type_id;
     const esFinal = item.ppe_reference.episode_id.esFinal;
     const esFinalDraga = item.ppe_reference.episode_id.esFinalDraga;
+    const esLalaparuza = item.ppe_reference.episode_id.esLalaparuza;
 
     if (!seasons.has(season.id)) {
       seasons.set(season.id, new Map());
@@ -108,7 +110,7 @@ const createCompleteSeasonMap = (data, imageMap) => {
 
     const currentQueen = queens.get(queen.id);
 
-    if (esFinal || esFinalDraga) {
+    if (esFinal || esFinalDraga || esLalaparuza) {
       if (pointType.id === "point9") {
         currentQueen.winner = true;
       }
@@ -149,13 +151,23 @@ const hallOfFameArray = async (seasons) => {
   const hallOfFame = [];
 
   for (const [seasonId, queens] of seasons) {
+    // Solo participan las reinas con episodios puntuables
+    const eligibleQueens = [...queens.values()].filter(
+      (queen) => queen.nEpisodes > 0,
+    );
+
+    // Si nadie tiene episodios puntuables, se excluye la temporada
+    if (eligibleQueens.length === 0) {
+      continue;
+    }
+
     // 1. Prioridad absoluta: WINNER
-    const winner = [...queens.values()].find((queen) => queen.winner);
+    const winner = eligibleQueens.find((queen) => queen.winner);
 
     // 2. Si no hay WINNER, gana la que más puntos tenga
     const seasonWinner =
       winner ||
-      [...queens.values()].reduce((highest, queen) =>
+      eligibleQueens.reduce((highest, queen) =>
         queen.score / queen.nEpisodes > highest.score / highest.nEpisodes
           ? queen
           : highest,
@@ -168,6 +180,7 @@ const hallOfFameArray = async (seasons) => {
         seasonWinner.score / seasonWinner.nEpisodes
       ).toFixed(3);
     }
+
     hallOfFame.push({
       seasonId,
       winner: seasonWinner,

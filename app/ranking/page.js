@@ -25,9 +25,11 @@ export default function RankingPage() {
   const [pointTypesNormal, setPointTypesNormal] = useState([]);
   const [pointTypesFinal, setPointTypesFinal] = useState([]);
   const [pointTypesFinalDraga, setPointTypesFinalDraga] = useState([]);
+  const [pointTypesLipsync, setPointTypesLipsync] = useState([]);
   const [pointTypesAll, setPointTypesAll] = useState([]);
   const [activeCell, setActiveCell] = useState(false);
   const [pointsMap, setPointsMap] = useState(new Map());
+  const [pointsMapLipsync, setPointsMapLipsync] = useState(new Map());
   const [queens, setQueens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
@@ -52,12 +54,19 @@ export default function RankingPage() {
     const typesNormal = await pointTypeService.getPointTypes("default");
     const typesFinal = await pointTypeService.getPointTypes("final");
     const typesFinalDraga = await pointTypeService.getPointTypes("finalDraga");
+    const typesLipsync = await pointTypeService.getPointTypes("lipsync");
 
-    const allPointTypes = [...typesNormal, ...typesFinal, ...typesFinalDraga];
+    const allPointTypes = [
+      ...typesNormal,
+      ...typesFinal,
+      ...typesFinalDraga,
+      ...typesLipsync,
+    ];
 
     setPointTypesNormal(typesNormal);
     setPointTypesFinal(typesFinal);
     setPointTypesFinalDraga(typesFinalDraga);
+    setPointTypesLipsync(typesLipsync);
     setPointTypesAll(allPointTypes);
 
     return allPointTypes;
@@ -70,7 +79,8 @@ export default function RankingPage() {
 
   const fetchPPE = async (season, pointTypes = pointTypesAll) => {
     const map = await ppeService.getRanking(season, pointTypes);
-    setPointsMap(map);
+    setPointsMap(map.pointsMap);
+    setPointsMapLipsync(map.lipsyncPointsMap)
   };
 
   const getProfile = async () => {
@@ -98,7 +108,7 @@ export default function RankingPage() {
 
   const saveRanking = async () => {
     try {
-      await ppeService.saveRanking(selectedSeason, queens, episodes, pointsMap);
+      await ppeService.saveRanking(selectedSeason, queens, episodes, pointsMap, pointsMapLipsync);
 
       alert("Ranking guardado correctamente");
     } catch (error) {
@@ -275,8 +285,11 @@ export default function RankingPage() {
           pointTypesNormal={pointTypesNormal}
           pointTypesFinal={pointTypesFinal}
           pointTypesFinalDraga={pointTypesFinalDraga}
+          pointTypesLipsync={pointTypesLipsync}
           pointsMap={pointsMap}
+          pointsMapLipsync={pointsMapLipsync}
           setPointsMap={setPointsMap}
+          setPointsMapLipsync={setPointsMapLipsync}
           activeCell={activeCell}
           setActiveCell={setActiveCell}
           tableRef={tableRef}

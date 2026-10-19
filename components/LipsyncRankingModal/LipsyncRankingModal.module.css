@@ -1,0 +1,427 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.modal {
+  width: min(850px, 100%);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-text);
+}
+
+.heading {
+  min-width: 0;
+}
+
+.header h2,
+.header p {
+  margin: 0;
+}
+
+.header h2 {
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.closeButton {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.closeButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.battleList {
+  padding: 12px 16px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.battle {
+  min-width: 0;
+  padding: 10px 0;
+}
+
+.battleHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.battleHeading h3 {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+/* Participantes */
+
+.participants {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 10px;
+}
+
+.participants[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.participantWrapper {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.participant {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.queenImage,
+.imagePlaceholder {
+  flex-shrink: 0;
+  width: 54px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.queenInfo {
+  flex: 0 1 125px;
+  width: 125px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+}
+
+.queenName {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.participant select {
+  display: block;
+  width: 100%;
+  max-width: 115px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 5px 3px;
+  border: 1px solid var(--color-text);
+  border-radius: 5px;
+  background: var(--color-surface-secondary);
+  color: inherit;
+  font-size: 0.72rem;
+}
+
+.participant select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Reducir el espacio entre las reinas y el VS. */
+.participants[data-count="2"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.participants[data-count="2"] .participantWrapper {
+  flex: 0 1 auto;
+  justify-content: center;
+  gap: 4px;
+}
+
+.participants[data-count="2"] .participant {
+  flex: 0 1 auto;
+}
+
+.participants[data-count="2"] .queenInfo {
+  flex: 0 1 110px;
+  width: 110px;
+}
+
+.participants[data-count="2"] .vs {
+  flex: 0 0 28px;
+  width: 28px;
+}
+
+/* Mantener el diseño compacto en móvil */
+@media (max-width: 650px) {
+  .participants[data-count="2"] {
+    gap: 4px;
+  }
+
+  .participants[data-count="2"] .queenInfo {
+    flex-basis: 85px;
+    width: 85px;
+  }
+
+  .participants[data-count="2"] .vs {
+    flex-basis: 24px;
+    width: 24px;
+  }
+}
+
+/* VS. centrado entre las reinas */
+
+.vs {
+  flex: 0 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* Vista compacta: dos columnas en escritorio */
+
+.viewMode {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  column-gap: 20px;
+  row-gap: 0;
+}
+
+.viewMode .battle {
+  min-width: 0;
+}
+
+.viewMode .participants {
+  gap: 6px;
+}
+
+/* Batallas de tres participantes */
+
+.viewMode .participants[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.viewMode .participants[data-count="3"] .participantWrapper {
+  flex-direction: column;
+  gap: 4px;
+}
+
+.viewMode .participants[data-count="3"] .participant {
+  width: 100%;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.viewMode .participants[data-count="3"] .queenImage,
+.viewMode .participants[data-count="3"] .imagePlaceholder {
+  width: 46px;
+  height: 61px;
+}
+
+.viewMode .participants[data-count="3"] .queenInfo {
+  flex: 0 1 auto;
+  width: 100%;
+  align-items: center;
+}
+
+.viewMode .participants[data-count="3"] .queenName {
+  font-size: 0.73rem;
+}
+
+.viewMode .participants[data-count="3"] .participant select {
+  width: 100%;
+  max-width: 100px;
+  padding: 4px 1px;
+  font-size: 0.65rem;
+}
+
+.viewMode .participants[data-count="3"] .vs {
+  flex: 0 0 auto;
+  height: 20px;
+}
+
+/* Botones inferiores */
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--color-text);
+}
+
+/* Móvil */
+
+@media (max-width: 650px) {
+  .overlay {
+    padding: 6px;
+  }
+
+  .modal {
+    max-height: 96vh;
+  }
+
+  .header {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .header h2 {
+    font-size: 0.95rem;
+  }
+
+  .header p {
+    max-width: 200px;
+    overflow-wrap: anywhere;
+    font-size: 0.75rem;
+  }
+
+  .battleList {
+    padding: 10px;
+  }
+
+  .viewMode {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .viewMode .participants {
+    gap: 4px;
+  }
+
+  .participantWrapper {
+    gap: 4px;
+  }
+
+  .participant {
+    gap: 6px;
+  }
+
+  .queenImage,
+  .imagePlaceholder {
+    width: 42px;
+    height: 56px;
+  }
+
+  .queenInfo {
+    flex-basis: 100px;
+    width: 100px;
+  }
+
+  .queenName {
+    font-size: 0.72rem;
+  }
+
+  .participant select {
+    max-width: 100px;
+    font-size: 0.65rem;
+  }
+
+  .vs {
+    flex-basis: 28px;
+    font-size: 0.72rem;
+  }
+
+  /* Batallas de dos participantes */
+
+  .viewMode .participants[data-count="2"] .participantWrapper {
+    gap: 4px;
+  }
+
+  .viewMode .participants[data-count="2"] .queenImage,
+  .viewMode .participants[data-count="2"] .imagePlaceholder {
+    width: 45px;
+    height: 60px;
+  }
+
+  .viewMode .participants[data-count="2"] .queenInfo {
+    flex-basis: 100px;
+    width: 100px;
+  }
+
+  .viewMode .participants[data-count="2"] .participant select {
+    font-size: 0.68rem;
+  }
+
+  /* Batallas de tres participantes */
+
+  .viewMode .participants[data-count="3"] {
+    gap: 4px;
+  }
+
+  .viewMode .participants[data-count="3"] .participantWrapper {
+    gap: 4px;
+  }
+
+  .viewMode .participants[data-count="3"] .queenImage,
+  .viewMode .participants[data-count="3"] .imagePlaceholder {
+    width: 36px;
+    height: 48px;
+  }
+
+  .viewMode .participants[data-count="3"] .queenName {
+    font-size: 0.68rem;
+  }
+
+  .viewMode .participants[data-count="3"] .participant select {
+    max-width: 85px;
+    font-size: 0.6rem;
+  }
+
+  .footer {
+    padding: 10px;
+  }
+
+  .footer button {
+    flex: 1;
+    padding: 9px 6px;
+  }
+}

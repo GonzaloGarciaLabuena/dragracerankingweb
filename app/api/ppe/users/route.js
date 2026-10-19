@@ -20,8 +20,11 @@ export async function GET(request) {
         .select(`
             point_type_id!inner(id),
             ppe_reference!inner (
+                id,
+                season_id,
                 episode_id!inner(id),
-                queen_id!inner(id)
+                queen_id!inner(id),
+                lipsync_battle_id
             )
         `)
         .eq('client_id', userId)

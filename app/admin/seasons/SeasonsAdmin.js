@@ -5,11 +5,11 @@ import { episodeService } from "@/lib/services/episodeService";
 import { ppeService } from "@/lib/services/ppeService";
 import { useEffect, useRef, useState } from "react";
 import styles from "./seasons.module.css";
-import EpisodeEditModal from "./EpisodeEditModal";
 import EpisodeModal from "./EpisodeModal";
 import SeasonMondal from "./SeasonModal";
 import SeasonSelector from "@/components/SeasonSelector/SeasonSelector";
 import CButton from "@/components/CButton/CButton";
+import { queenService } from "@/lib/services/queenService";
 
 export default function SeasonsAdmin() {
   const [seasons, setSeasons] = useState([]);
@@ -20,6 +20,7 @@ export default function SeasonsAdmin() {
   const [newSeason, setNewSeason] = useState(null);
   const [editSeason, setEditSeason] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [queens, setQueens] = useState([]);
 
   const optionsRef = useRef(null);
 
@@ -57,9 +58,15 @@ export default function SeasonsAdmin() {
     fetchEpisodes(selectedSeason);
   };
 
-  const handleSeasonChange = (season) => {
+  const fetchQueens = async (season) => {
+    const data = await queenService.listQueens(season, null);
+    setQueens(data.data);
+  };
+
+  const handleSeasonChange = async (season) => {
     setSelectedSeason(season);
-    fetchEpisodes(season);
+
+    await Promise.all([fetchEpisodes(season), fetchQueens(season)]);
   };
 
   return (
@@ -161,6 +168,7 @@ export default function SeasonsAdmin() {
 
       {newEpisode && (
         <EpisodeModal
+          queens={queens}
           onClose={() => setNewEpisode(null)}
           onSave={async (newEpisode) => {
             await episodeService.createEpisode(selectedSeason.id, newEpisode);
@@ -175,6 +183,7 @@ export default function SeasonsAdmin() {
       {editingEpisode && (
         <EpisodeModal
           episode={editingEpisode}
+          queens={queens}
           onClose={() => setEditingEpisode(null)}
           onSave={async (updatedEpisode) => {
             await episodeService.updateEpisode(updatedEpisode);

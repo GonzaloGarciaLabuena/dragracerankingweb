@@ -20,6 +20,10 @@ export default function QueenNewModal({
   const [url, setUrl] = useState(queen.image_url || "");
   const [imagePreview, setImagePreview] = useState(queen.image_url || null);
   const [selectedSeason, setSelectedSeason] = useState(queen.season || season);
+  const [tournament, setTournament] = useState(
+    selectedSeason?.esTournament || false,
+  );
+  const [bracket, setBracket] = useState(queen.bracket || 0);
   const [seasons, setSeasons] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -28,12 +32,17 @@ export default function QueenNewModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    onSave({ name: name, image_url: url, season: selectedSeason });
+    onSave({
+      name: name,
+      image_url: url,
+      season: selectedSeason,
+      bracket: tournament ? Number(bracket) : 0,
+    });
   };
 
   const handleSeasonChange = (seasonChange) => {
     setSelectedSeason(seasonChange);
+    setTournament(seasonChange.esTournament);
   };
 
   const fetchSeasons = async () => {
@@ -109,6 +118,25 @@ export default function QueenNewModal({
                   </div>
                 </div>
 
+                {tournament && (
+                  <>
+                    <div className={styles.formLabelContainer}>
+                      <label className={styles.bracket}>En bracket</label>
+                    </div>
+
+                    <div className={styles.formInputContainer}>
+                      <input
+                        id="queenBracket"
+                        type="number"
+                        value={bracket}
+                        min={0}
+                        onChange={(e) => setBracket(e.target.value)}
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div className={styles.formLabelContainer}>
                   <label className={styles.formLabel}>Url</label>
                 </div>
@@ -158,6 +186,23 @@ export default function QueenNewModal({
                     />
                   </div>
                 </div>
+
+                {tournament && (
+                  <div className={styles.formInputContainer}>
+                    <div ref={optionsRef} className={styles.bracketContainer}>
+                      <span className={styles.bracket}>En bracket</span>
+
+                      <input
+                        id="queenBracket"
+                        type="number"
+                        value={bracket}
+                        min={0}
+                        onChange={(e) => setBracket(e.target.value)}
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className={styles.formInputContainer}>
                   <label className={styles.formLabel}>Url</label>

@@ -35,7 +35,6 @@ export default function QueensAdmin() {
         { id: "all" },
         currentPage,
       );
-
       setQueens(queensList.data);
       setTotalPages(queensList.totalPages);
     } catch (error) {
@@ -200,9 +199,9 @@ export default function QueensAdmin() {
         <QueenNewModal
           season={selectedSeason}
           onClose={() => setNewQueen(false)}
-          onSave={async ({ name, image_url, season }) => {
+          onSave={async ({ name, image_url, season, bracket }) => {
             try {
-              const result = await queenService.createQueen(name, season, image_url);
+              const result = await queenService.createQueen(name, season, image_url, bracket);
 
               if (result) {
                 alert(`Reina ${name} creada correctamente`);

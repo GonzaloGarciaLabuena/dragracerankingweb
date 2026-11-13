@@ -13,7 +13,7 @@ export async function GET(request) {
 
   const { data, error: dbError } = await supabase
     .from("episode")
-    .select("id, number, title, esFinal, esFinalDraga, esLalaparuza")
+    .select("id, number, title, esFinal, esFinalDraga, esLalaparuza, bracket")
     .eq("season_id", seasonId)
     .order("number", { ascending: true });
   if (dbError) {
@@ -40,7 +40,8 @@ export async function POST(request) {
       title: newEpisode.title,
       esFinal: newEpisode.esFinal,
       esFinalDraga: newEpisode.esFinalDraga,
-      esLalaparuza: newEpisode.esLalaparuza
+      esLalaparuza: newEpisode.esLalaparuza,
+      bracket: newEpisode.bracket
     })
     .select(); // Devuelve el dato insertado
 
@@ -124,7 +125,8 @@ export async function PATCH(request) {
     title: episode.title,
     esFinal: episode.esFinal,
     esFinalDraga: episode.esFinalDraga,
-    esLalaparuza: episode.esLalaparuza
+    esLalaparuza: episode.esLalaparuza,
+    bracket: episode.bracket
   };
   
   const { data, error: dbError } = await supabase

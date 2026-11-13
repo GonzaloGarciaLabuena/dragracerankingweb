@@ -24,6 +24,7 @@ export async function GET(request) {
             esFinal,
             esFinalDraga,
             esLalaparuza,
+            bracket,
             ppe_reference!inner(id)
         `,
     )

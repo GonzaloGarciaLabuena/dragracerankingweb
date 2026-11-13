@@ -115,6 +115,19 @@ export default function SeasonsAdmin() {
           >
             Publicar
           </CButton>
+
+          <CButton
+            disabled={!selectedSeason}
+            onClick={async () => {
+              if (confirm("¿Eliminar temporada " + selectedSeason.name + "?")) {
+                await seasonService.deleteSeason(selectedSeason.id);
+                fetchSeasons();
+                setSelectedSeason(null)
+              }
+            }}
+          >
+            Eliminar
+          </CButton>
         </div>
       </div>
 
@@ -169,6 +182,7 @@ export default function SeasonsAdmin() {
       {newEpisode && (
         <EpisodeModal
           queens={queens}
+          tournament={selectedSeason.esTournament}
           onClose={() => setNewEpisode(null)}
           onSave={async (newEpisode) => {
             await episodeService.createEpisode(selectedSeason.id, newEpisode);
@@ -184,6 +198,7 @@ export default function SeasonsAdmin() {
         <EpisodeModal
           episode={editingEpisode}
           queens={queens}
+          tournament={selectedSeason.esTournament}
           onClose={() => setEditingEpisode(null)}
           onSave={async (updatedEpisode) => {
             await episodeService.updateEpisode(updatedEpisode);
@@ -198,11 +213,12 @@ export default function SeasonsAdmin() {
       {newSeason && (
         <SeasonMondal
           onClose={() => setNewSeason(null)}
-          onSave={async ({ name, franchise, year }) => {
+          onSave={async ({ name, franchise, year, tournament}) => {
             const newSeason = await seasonService.createSeason(
               name,
               franchise,
               year,
+              tournament
             );
             setNewSeason(null);
             fetchSeasons(newSeason);
@@ -216,12 +232,13 @@ export default function SeasonsAdmin() {
         <SeasonMondal
           season={selectedSeason}
           onClose={() => setEditSeason(null)}
-          onSave={async ({ name, franchise, year }) => {
+          onSave={async ({ name, franchise, year, tournament}) => {
             const response = await seasonService.updateSeason(
               selectedSeason.id,
               name,
               franchise,
               year,
+              tournament
             );
             if (response.success) {
               setEditSeason(null);

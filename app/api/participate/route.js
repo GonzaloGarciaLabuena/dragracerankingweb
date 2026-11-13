@@ -11,16 +11,14 @@ export async function POST(request) {
     return Response.json({ error: authError.message }, { status: 401 });
   }
 
-  const body = await request.json();
+  const { queenId, seasonId, image_url, bracket } = await request.json();
 
-  const { data, error: dbError } = await supabase
-    .from("participate")
-    .insert({
-      queen_id: body.queenId,
-      season_id: body.seasonId,
-      image_url: body.image_url,
-    })
-    .select(); // Devuelve el dato insertado
+  const { data, error: dbError } = await supabase.rpc("create_participate", {
+    p_queen_id: queenId,
+    p_season_id: seasonId,
+    p_image_url: image_url,
+    p_bracket: bracket ?? 0,
+  });
 
   if (dbError) {
     return NextResponse.json({ error: dbError.message }, { status: 500 });

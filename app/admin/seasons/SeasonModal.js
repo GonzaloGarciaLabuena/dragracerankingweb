@@ -4,10 +4,16 @@ import { useEffect, useState } from "react";
 import styles from "./modal.module.css";
 import CButton from "@/components/CButton/CButton";
 
-export default function SeasonModal({ children, season = {}, onClose, onSave }) {
+export default function SeasonModal({
+  children,
+  season = {},
+  onClose,
+  onSave,
+}) {
   const [name, setName] = useState(season.name || "");
   const [franchise, setFranchise] = useState(season.franchise || "");
   const [year, setYear] = useState(season.year || "");
+  const [tournament, setTournament] = useState(season.esTournament || false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,6 +22,7 @@ export default function SeasonModal({ children, season = {}, onClose, onSave }) 
       name: name.trim(),
       franchise: franchise.trim(),
       year: Number(year),
+      tournament: tournament,
     });
   };
 
@@ -58,6 +65,20 @@ export default function SeasonModal({ children, season = {}, onClose, onSave }) 
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
                 className={styles.formInput}
+              />
+            </div>
+            <div className={styles.formInputContainer}>
+              <label className={styles.formLabel}>Modo Tournament</label>
+
+              <input
+                id="tournament"
+                type="checkbox"
+                checked={tournament}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setTournament(checked);
+                }}
+                className={styles.checkbox}
               />
             </div>
           </div>

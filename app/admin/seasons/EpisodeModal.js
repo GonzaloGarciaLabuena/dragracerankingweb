@@ -10,6 +10,7 @@ export default function EpisodeModal({
   children,
   episode,
   queens,
+  tournament,
   onClose,
   onSave,
 }) {
@@ -19,6 +20,7 @@ export default function EpisodeModal({
   const [lalaparuza, setLalaparuza] = useState(episode?.esLalaparuza ?? false);
   const [showLipsyncModal, setShowLipsyncModal] = useState(false);
   const [battles, setBattles] = useState([]);
+  const [bracket, setBracket] = useState(episode?.bracket || 0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,6 +31,7 @@ export default function EpisodeModal({
       esFinal: final,
       esFinalDraga: finalDraga,
       esLalaparuza: lalaparuza,
+      bracket: bracket,
     });
   };
 
@@ -147,6 +150,21 @@ export default function EpisodeModal({
                 className={styles.checkbox}
               />
             </div>
+
+            {tournament && (
+              <div className={styles.formInputContainer}>
+                <label className={styles.formLabel}>Bracket</label>
+
+                <input
+                  id="queenBracket"
+                  type="number"
+                  value={bracket}
+                  min={0}
+                  onChange={(e) => setBracket(e.target.value)}
+                  className={styles.formInput}
+                />
+              </div>
+            )}
 
             {lalaparuza && (
               <CButton type="button" onClick={() => setShowLipsyncModal(true)}>

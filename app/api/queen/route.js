@@ -28,11 +28,15 @@ export async function GET(request) {
       season: season_id(
         id,
         name,
-        franchise
+        franchise,
+        esTournament
       ),
       queen: queen_id (
         id,
         name
+      ),
+      participate_bracket (
+        bracket
       )
     `,
       { count: "exact" },
@@ -63,13 +67,15 @@ export async function POST(request) {
     return response;
   }
 
-  const body = await request.json();
+  const {name, seasonId, image_url, bracket} = await request.json();
+  
   const { data, error: dbError } = await supabase.rpc(
     "create_queen_participate",
     {
-      p_name: body.name,
-      p_season_id: body.seasonId,
-      p_image_url: body.image_url,
+      p_name: name,
+      p_season_id: seasonId,
+      p_image_url: image_url,
+      p_bracket: bracket
     },
   );
 

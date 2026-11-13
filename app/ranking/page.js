@@ -37,6 +37,7 @@ export default function RankingPage() {
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("score");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [mapsByBracket, setMapsByBracket] = useState({});
 
   const isMobile = useIsMobile();
 
@@ -48,6 +49,7 @@ export default function RankingPage() {
   const fetchEpisodes = async (season) => {
     const map = await episodeService.getEpisodes(season.id);
     setEpisodes(map);
+    return map;
   };
 
   const fetchPointTypes = async () => {
@@ -75,12 +77,17 @@ export default function RankingPage() {
   const fetchQueens = async (season) => {
     const data = await queenService.listQueens(season, null);
     setQueens(data.data);
+    return data.data;
   };
 
   const fetchPPE = async (season, pointTypes = pointTypesAll) => {
     const map = await ppeService.getRanking(season, pointTypes);
     setPointsMap(map.pointsMap);
-    setPointsMapLipsync(map.lipsyncPointsMap)
+    setPointsMapLipsync(map.lipsyncPointsMap);
+    return {
+      pointsMap: map.pointsMap,
+      lipsyncPointsMap: map.lipsyncPointsMap,
+    };
   };
 
   const getProfile = async () => {
@@ -91,13 +98,43 @@ export default function RankingPage() {
   const handleSeasonChange = async (season) => {
     setLoading(true);
     setSelectedSeason(season);
-
     try {
-      await Promise.all([
+      const [episodes, queens, mapPPE] = await Promise.all([
         fetchEpisodes(season),
         fetchQueens(season),
         fetchPPE(season),
       ]);
+      if (season.esTournament) {
+        const brackets = [
+          ...new Set(
+            episodes
+              .map((episode) => episode.bracket)
+              .filter((bracket) => bracket != null),
+          ),
+        ];
+        console.log(mapPPE.pointsMap);
+        const mapsByBracket = {};
+
+        for (const bracket of brackets) {
+          const episodeIds = new Set(
+            episodes
+              .filter((episode) => episode.bracket === bracket)
+              .map((episode) => episode.id),
+          );
+
+          mapsByBracket[bracket] = {
+            pointsMap: new Map(
+              [...mapPPE.pointsMap].filter(([key]) => {
+                const episodeId = key.split("|")[1];
+                return episodeIds.has(episodeId);
+              }),
+            ),
+            queens: queens.filter((queen) => queen.bracket === bracket),
+          };
+        }
+
+        setMapsByBracket(mapsByBracket);
+      }
     } catch (error) {
       console.error("Error loading queens:", error);
       setError("No se ha podido cargar el ranking de la temporada.");
@@ -108,8 +145,24 @@ export default function RankingPage() {
 
   const saveRanking = async () => {
     try {
-      await ppeService.saveRanking(selectedSeason, queens, episodes, pointsMap, pointsMapLipsync);
+      await ppeService.saveRanking(
+        selectedSeason,
+        queens,
+        episodes,
+        pointsMap,
+        pointsMapLipsync,
+      );
+      if (selectedSeason.esTournament) {
+        for (const map of Object.values(mapsByBracket)) {
+          console.log(map.pointsMap);
+        }
 
+        const pointsMap = new Map(
+          Object.values(mapsByBracket).flatMap((map) => [
+            ...map.pointsMap.entries(),
+          ]),
+        );
+      }
       alert("Ranking guardado correctamente");
     } catch (error) {
       const details = Array.isArray(error.cause) ? error.cause.join("\n") : "";
@@ -204,6 +257,20 @@ export default function RankingPage() {
     }
   }, [initialDataLoaded, seasons]);
 
+  const setBracketPointsMap = (bracket, newPointsMap) => {
+    setMapsByBracket((prev) => ({
+      ...prev,
+      [bracket]: {
+        ...prev[bracket],
+        pointsMap:
+          typeof newPointsMap === "function"
+            ? newPointsMap(prev[bracket].pointsMap)
+            : newPointsMap,
+      },
+    }));
+    setPointsMap(newPointsMap)
+  };
+
   return (
     <div className={styles.pageContent}>
       {loading && (
@@ -276,26 +343,56 @@ export default function RankingPage() {
         )}
       </div>
 
-      {selectedSeason && (
-        <RankingTable
-          user={profile}
-          season={selectedSeason}
-          queens={queens}
-          episodes={episodes}
-          pointTypesNormal={pointTypesNormal}
-          pointTypesFinal={pointTypesFinal}
-          pointTypesFinalDraga={pointTypesFinalDraga}
-          pointTypesLipsync={pointTypesLipsync}
-          pointsMap={pointsMap}
-          pointsMapLipsync={pointsMapLipsync}
-          setPointsMap={setPointsMap}
-          setPointsMapLipsync={setPointsMapLipsync}
-          activeCell={activeCell}
-          setActiveCell={setActiveCell}
-          tableRef={tableRef}
-          sortBy={sortBy}
-        />
-      )}
+      {selectedSeason &&
+        (selectedSeason.esTournament ? (
+          Object.entries(mapsByBracket).map(([bracket, bracketData]) => (
+            <div key={bracket}>
+              <h2>Bracket {bracket}</h2>
+
+              <RankingTable
+                user={profile}
+                season={selectedSeason}
+                queens={bracketData.queens}
+                episodes={episodes.filter(
+                  (episode) => episode.bracket === Number(bracket),
+                )}
+                pointTypesNormal={pointTypesNormal}
+                pointTypesFinal={pointTypesFinal}
+                pointTypesFinalDraga={pointTypesFinalDraga}
+                pointTypesLipsync={pointTypesLipsync}
+                pointsMap={bracketData.pointsMap}
+                pointsMapLipsync={pointsMapLipsync}
+                setPointsMap={(newPointsMap) =>
+                  setBracketPointsMap(bracket, newPointsMap)
+                }
+                setPointsMapLipsync={setPointsMapLipsync}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                tableRef={tableRef}
+                sortBy={sortBy}
+              />
+            </div>
+          ))
+        ) : (
+          <RankingTable
+            user={profile}
+            season={selectedSeason}
+            queens={queens}
+            episodes={episodes}
+            pointTypesNormal={pointTypesNormal}
+            pointTypesFinal={pointTypesFinal}
+            pointTypesFinalDraga={pointTypesFinalDraga}
+            pointTypesLipsync={pointTypesLipsync}
+            pointsMap={pointsMap}
+            pointsMapLipsync={pointsMapLipsync}
+            setPointsMap={setPointsMap}
+            setPointsMapLipsync={setPointsMapLipsync}
+            activeCell={activeCell}
+            setActiveCell={setActiveCell}
+            tableRef={tableRef}
+            sortBy={sortBy}
+          />
+        ))}
     </div>
   );
 }

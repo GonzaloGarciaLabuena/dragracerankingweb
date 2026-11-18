@@ -38,11 +38,12 @@ export default function LipsyncRankingModal({
       ].filter(Boolean);
 
       for (const queenId of queenIds) {
-        const key = `${battle.id}|${queenId}`;
+        const key = getPointKey(battle.id, queenId);
         const point = pointsMapLipsync.get(key);
+        const keyPoint = `${battle.id}|${queenId}`;
 
         if (point) {
-          initialPoints.set(key, point.id);
+          initialPoints.set(keyPoint, point.id);
         }
       }
     }
